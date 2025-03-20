@@ -16,7 +16,7 @@ const ManageProducts = () => {
               headers: { Authorization: `Bearer ${userInfo.token}` },
           };
     
-          const { data } = await axios.get("http://localhost:5000/api/products/admin", config);
+          const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/products/admin", config);
     
           console.log("✅ Admin API Response:", data); // ✅ Log API Response
     
@@ -38,7 +38,7 @@ const ManageProducts = () => {
         headers: { Authorization: `Bearer ${userInfo.token}` },
       };
   
-      await axios.delete(`http://localhost:5000/api/products/${productId}/admin`, config); // ✅ Updated route
+      await axios.delete(`https://bazario-backend-iqac.onrender.com/api/products/${productId}/admin`, config); // ✅ Updated route
       setProducts(products.filter((product) => product._id !== productId));
     } catch (error) {
       console.error("❌ Error deleting product:", error);

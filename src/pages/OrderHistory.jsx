@@ -9,7 +9,7 @@ const OrderHistory = () => {
         const fetchOrders = async () => {
             if (!userInfo) return;
             try {
-                const { data } = await axios.get("http://localhost:5000/api/orders/my-orders", {
+                const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders/my-orders", {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
                 setOrders(data);

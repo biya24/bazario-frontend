@@ -16,7 +16,7 @@ const PaymentSuccess = () => {
 
             try {
                 console.log("🔄 Updating order with session_id:", sessionId);
-                const { data } = await axios.post("http://localhost:5000/api/payments/success", {
+                const { data } = await axios.post("https://bazario-backend-iqac.onrender.com/api/payments/success", {
                     session_id: sessionId, 
                 });
 

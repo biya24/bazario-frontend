@@ -30,7 +30,7 @@ const AddProductForm = ({ onProductAdded }) => {
                 formData.append("image", image);
 
                 const { data } = await axios.post(
-                    "http://localhost:5000/api/products/upload",
+                    "https://bazario-backend-iqac.onrender.com/api/products/upload",
                     formData,
                     { headers: { Authorization: `Bearer ${userInfo.token}` } }
                 );
@@ -49,7 +49,7 @@ const AddProductForm = ({ onProductAdded }) => {
                 imageUrl, // Cloudinary image URL
             };
 
-            await axios.post("http://localhost:5000/api/products", productData, {
+            await axios.post("https://bazario-backend-iqac.onrender.com/api/products", productData, {
                 headers: { Authorization: `Bearer ${userInfo.token}` },
             });
 

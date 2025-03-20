@@ -19,7 +19,7 @@ const VendorDashboard = () => {
                 headers: { Authorization: `Bearer ${userInfo.token}` },
             };
 
-            const { data } = await axios.get("http://localhost:5000/api/products/vendor", config);
+            const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/products/vendor", config);
             setProducts(data);
         } catch (error) {
             setMessage(error.response?.data?.message || "Failed to fetch products");

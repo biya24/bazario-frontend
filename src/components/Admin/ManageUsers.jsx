@@ -21,7 +21,7 @@ const ManageUsers = () => {
           },
         };
 
-        const { data } = await axios.get("http://localhost:5000/api/users", config);
+        const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/users", config);
         setUsers(data);
       } catch (error) {
         console.error("❌ Error fetching users:", error);
@@ -36,7 +36,7 @@ const ManageUsers = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-      await axios.put(`http://localhost:5000/api/users/${userId}/promote`, {}, config);
+      await axios.put(`https://bazario-backend-iqac.onrender.com/api/users/${userId}/promote`, {}, config);
 
       setUsers(users.map(user =>
         user._id === userId ? { ...user, role: "vendor" } : user
@@ -54,7 +54,7 @@ const ManageUsers = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-      await axios.put(`http://localhost:5000/api/users/${userId}/demote`, {}, config);
+      await axios.put(`https://bazario-backend-iqac.onrender.com/api/users/${userId}/demote`, {}, config);
 
       setUsers(users.map(user =>
         user._id === userId ? { ...user, role: "customer" } : user
@@ -75,7 +75,7 @@ const ManageUsers = () => {
     try {
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
 
-      await axios.delete(`http://localhost:5000/api/users/${userId}`, config);
+      await axios.delete(`https://bazario-backend-iqac.onrender.com/api/users/${userId}`, config);
 
       setUsers(users.filter(user => user._id !== userId));
       alert("✅ User deleted successfully!");

@@ -23,7 +23,7 @@ const UserDashboard = () => {
         // ✅ Fetch user profile
         const fetchUserProfile = async () => {
             try {
-                const { data } = await axios.get("http://localhost:5000/api/users/profile", { headers });
+                const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/users/profile", { headers });
                 setUser(data);
                 setName(data.name);
                 setEmail(data.email);
@@ -35,7 +35,7 @@ const UserDashboard = () => {
         // ✅ Fetch user orders
         const fetchOrders = async () => {
             try {
-                const { data } = await axios.get("http://localhost:5000/api/orders", { headers });
+                const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders", { headers });
                 setOrders(data);
             } catch (error) {
                 console.error("❌ Error fetching orders:", error.response?.data?.message || error.message);
@@ -51,7 +51,7 @@ const UserDashboard = () => {
         e.preventDefault();
         try {
             const { data } = await axios.put(
-                "http://localhost:5000/api/users/profile",
+                "https://bazario-backend-iqac.onrender.com/api/users/profile",
                 { name, email, password },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

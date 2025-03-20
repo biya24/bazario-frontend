@@ -26,7 +26,7 @@ const CheckoutScreen = () => {
         try {
             // ✅ Step 1: Create Order First
             const orderResponse = await axios.post(
-                "http://localhost:5000/api/orders",
+                "https://bazario-backend-iqac.onrender.com/api/orders",
                 {
                     items: cartItems.map((item) => ({
                         productId: item._id,  // ✅ Ensure correct productId
@@ -46,7 +46,7 @@ const CheckoutScreen = () => {
     
             // ✅ Step 2: Proceed with Payment
             const { data } = await axios.post(
-                "http://localhost:5000/api/payments/pay",
+                "https://bazario-backend-iqac.onrender.com/api/payments/pay",
                 {
                     orderId, // ✅ Include Order ID in payment request
                     amount: cartTotal * 100, // Convert to cents
