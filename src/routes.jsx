@@ -11,6 +11,8 @@ import VendorDashboard from "./pages/VendorDashboard";
 import CheckoutScreen from "./pages/CheckoutScreen";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderHistory from "./pages/OrderHistory";
+import ManageOrders from "../pages/Admin/ManageOrders";
+import OrderDetails from "../pages/Admin/OrderDetails";
 
 const AppRoutes = () => {
   return (
@@ -27,6 +29,9 @@ const AppRoutes = () => {
       <Route path="/checkout" element={<CheckoutScreen />} />
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/orders" element={<OrderHistory />} />
+       {/* ✅ Admin Routes */}
+       <Route path="/admin/orders" element={<ManageOrders />} />
+      <Route path="/admin/orders/:id" element={<OrderDetails />} />
     </Routes>
   );
 };

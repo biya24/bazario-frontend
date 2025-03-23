@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";  // ✅ Import Link
 import axios from "axios";
 
 const ManageOrders = () => {
@@ -31,6 +32,29 @@ const ManageOrders = () => {
     fetchOrders();
   }, []);
 
+  // ✅ Delete Order Function
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to delete this order?")) return; // Confirm before deleting
+
+    try {
+      const config = {
+        headers: { Authorization: `Bearer ${userInfo.token}` },
+      };
+
+      await axios.delete(
+        `https://bazario-backend-iqac.onrender.com/api/orders/${orderId}/admin`, 
+        config
+      );
+
+      // ✅ Remove from state after deletion
+      setOrders(orders.filter((order) => order._id !== orderId));
+      alert("Order deleted successfully!");
+    } catch (error) {
+      console.error("❌ Error deleting order:", error);
+      alert("Failed to delete order.");
+    }
+  };
+
   return (
     <div>
       <h3>Manage Orders</h3>
@@ -49,13 +73,19 @@ const ManageOrders = () => {
             <tr key={order._id}>
               <td>{order._id}</td>
               <td>{order.customerId?.name || "Unknown Customer"}</td>
-              <td>${order.totalAmount ? order.totalAmount.toFixed(2) : "0.00"}</td> 
+              <td>${Number(order.totalAmount || 0).toFixed(2)}</td> 
               <td>{order.status}</td>
               <td>
-                <button className="btn btn-sm btn-primary">
+                {/* ✅ Link to View Order Details */}
+                <Link to={`/admin/orders/${order._id}`} className="btn btn-sm btn-primary">
                   View Details
-                </button>
-                <button className="btn btn-sm btn-danger ms-2">
+                </Link>
+
+                {/* ✅ Delete Order */}
+                <button 
+                  className="btn btn-sm btn-danger ms-2" 
+                  onClick={() => deleteOrder(order._id)}
+                >
                   Delete
                 </button>
               </td>
