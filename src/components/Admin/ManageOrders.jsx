@@ -48,8 +48,8 @@ const ManageOrders = () => {
           {orders.map((order) => (
             <tr key={order._id}>
               <td>{order._id}</td>
-              <td>{order.user?.name || "Guest"}</td>
-              <td>${order.totalPrice.toFixed(2)}</td>
+              <td>{order.customerId?.name || "Unknown Customer"}</td>
+              <td>${order.totalAmount ? order.totalAmount.toFixed(2) : "0.00"}</td> 
               <td>{order.status}</td>
               <td>
                 <button className="btn btn-sm btn-primary">
