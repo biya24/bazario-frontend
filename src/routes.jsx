@@ -13,6 +13,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderHistory from "./pages/OrderHistory";
 import ManageOrders from "./components/Admin/ManageOrders";
 import OrderDetails from "./components/Admin/OrderDetails";
+import VerifyEmail from "./pages/VerifyEmail";
 
 const AppRoutes = () => {
   return (
