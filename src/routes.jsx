@@ -11,8 +11,8 @@ import VendorDashboard from "./pages/VendorDashboard";
 import CheckoutScreen from "./pages/CheckoutScreen";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import OrderHistory from "./pages/OrderHistory";
-import ManageOrders from "./pages/Admin/ManageOrders";
-import OrderDetails from "./pages/Admin/OrderDetails";
+import ManageOrders from "./components/Admin/ManageOrders";
+import OrderDetails from "./components/Admin/OrderDetails";
 
 const AppRoutes = () => {
   return (
