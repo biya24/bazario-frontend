@@ -16,6 +16,13 @@ export const register = async (name, email, password, role) => {
     return data;
   };
 
+// ✅ Verify Email API Request
+export const verifyEmail = async (token) => {
+  const { data } = await axios.get(`${API_URL}/verify-email/${token}`);
+  return data;
+};
+
+
 // ✅ Get User Profile (Protected)
 export const getUserProfile = async (token) => {
   const { data } = await axios.get(`${API_URL}/profile`, {

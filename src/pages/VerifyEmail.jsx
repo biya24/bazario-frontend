@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { verifyEmail } from "../api/auth"; // ✅ Import API function
 
 const VerifyEmail = () => {
   const { token } = useParams();
@@ -10,7 +10,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/users/verify-email/${token}`);
+        const data = await verifyEmail(token); // ✅ Call API function
         setMessage(data.message);
         setTimeout(() => navigate("/login"), 3000);
       } catch (error) {
