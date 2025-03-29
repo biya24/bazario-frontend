@@ -22,6 +22,23 @@ const LoginScreen = () => {
     }
 };
 
+const handleResendVerification = async () => {
+  try {
+    const { data } = await axios.post(
+      "https://bazario-backend-iqac.onrender.com/api/users/resend-verification",
+      { email }
+    );
+    alert(data.message);
+  } catch (error) {
+    alert(error.response?.data?.message || "Failed to resend email");
+  }
+};
+
+<button onClick={handleResendVerification} className="btn btn-warning">
+  Resend Verification Email
+</button>;
+
+
 
   return (
     <div className="container d-flex justify-content-center align-items-center vh-100">
@@ -33,6 +50,9 @@ const LoginScreen = () => {
           <input type="password" className="form-control my-2" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           <button type="submit" className="btn btn-primary w-100 mt-2">Login</button>
         </form>
+        <button onClick={handleResendVerification} className="btn btn-warning">
+  Resend Verification Email
+</button>;
       </div>
     </div>
   );
