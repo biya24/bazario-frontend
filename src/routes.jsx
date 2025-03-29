@@ -18,6 +18,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 const AppRoutes = () => {
   return (
     <Routes>
+       <Route path="/verify-email/:token" element={<VerifyEmail />} />
       <Route path="/" element={<HomeScreen />} />
       <Route path="/login" element={<LoginScreen />} />
       <Route path="/register" element={<RegisterScreen />} />
@@ -33,7 +34,7 @@ const AppRoutes = () => {
        {/* ✅ Admin Routes */}
        <Route path="/admin/orders" element={<ManageOrders />} />
       <Route path="/admin/orders/:id" element={<OrderDetails />} />
-      <Route path="/verify-email/:token" element={<VerifyEmail />} />
+     
 
     </Routes>
   );
