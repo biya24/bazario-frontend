@@ -10,7 +10,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     const verify = async () => {
       try {
-        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/auth/verify-email/${token}`);
+        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/users/verify-email/${token}`);
         setMessage(data.message);
         setTimeout(() => navigate("/login"), 3000);
       } catch (error) {
