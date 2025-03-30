@@ -4,12 +4,6 @@ import axios from "axios";
 
 const CheckoutScreen = () => {
     const [loading, setLoading] = useState(false);
-    const cartItems = useSelector((state) => state.cart.cartItems);
-    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || null;
-
-    const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
-    // ✅ Address State
     const [address, setAddress] = useState({
         fullName: "",
         houseName: "",
@@ -18,12 +12,18 @@ const CheckoutScreen = () => {
         district: "",
         pin: "",
         mobile: "",
-        addressType: "home"
+        addressType: "home",
     });
 
-    // ✅ Handle Input Change
+    const cartItems = useSelector((state) => state.cart.cartItems);
+    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || null;
+    const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+
     const handleAddressChange = (e) => {
-        setAddress({ ...address, [e.target.name]: e.target.value });
+        setAddress((prevState) => ({
+            ...prevState,
+            [e.target.name]: e.target.value,
+        }));
     };
 
     const handlePayment = async () => {
@@ -31,21 +31,31 @@ const CheckoutScreen = () => {
             alert("You must be logged in to place an order! ❌");
             return;
         }
-    
+
         if (!cartItems || cartItems.length === 0) {
             alert("Your cart is empty! ❌");
             return;
         }
 
-        // ✅ Validate Address Fields
+        // ✅ Validate Address Fields Before Proceeding
         if (!address.fullName || !address.houseName || !address.street || !address.city || !address.district || !address.pin || !address.mobile) {
-            alert("Please fill in all address fields!");
+            alert("Please fill in all required address fields! ❌");
             return;
         }
-    
+
+        console.log("📦 Sending Order Data:", {
+            items: cartItems.map((item) => ({
+                productId: item._id,
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+            })),
+            totalAmount: cartTotal,
+            deliveryAddress: address, // ✅ Ensure this is included
+        });
+
         setLoading(true);
         try {
-            // ✅ Step 1: Create Order with Address
             const orderResponse = await axios.post(
                 "https://bazario-backend-iqac.onrender.com/api/orders",
                 {
@@ -56,17 +66,16 @@ const CheckoutScreen = () => {
                         price: item.price,
                     })),
                     totalAmount: cartTotal,
-                    deliveryAddress: address, // ✅ Send the complete address!
+                    deliveryAddress: address, // ✅ Ensure address is included
                 },
                 {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 }
             );
-    
+
             const orderId = orderResponse.data._id;
             console.log("✅ Order Created, Order ID:", orderId);
-    
-            // ✅ Step 2: Proceed with Payment
+
             const { data } = await axios.post(
                 "https://bazario-backend-iqac.onrender.com/api/payments/pay",
                 {
@@ -75,15 +84,15 @@ const CheckoutScreen = () => {
                     currency: "cad",
                 }
             );
-    
+
             console.log("✅ Payment Session Created:", data);
-    
+
             if (data.url) {
                 window.location.href = data.url;
             } else {
                 alert("Payment Failed: No redirect URL received ❌");
             }
-    
+
         } catch (error) {
             console.error("❌ Payment Error:", error.response?.data || error.message);
             alert(`Payment Failed: ${error.response?.data?.message || "Something went wrong"}`);
@@ -96,8 +105,8 @@ const CheckoutScreen = () => {
         <div className="container mt-5">
             <h2>Checkout</h2>
             
-            {/* ✅ Address Input Fields */}
-            <h3>Delivery Address</h3>
+            {/* ✅ Address Form */}
+            <h4>Delivery Address</h4>
             <input type="text" name="fullName" placeholder="Full Name" value={address.fullName} onChange={handleAddressChange} required />
             <input type="text" name="houseName" placeholder="House/Apartment Name" value={address.houseName} onChange={handleAddressChange} required />
             <input type="text" name="street" placeholder="Street" value={address.street} onChange={handleAddressChange} required />
@@ -105,7 +114,7 @@ const CheckoutScreen = () => {
             <input type="text" name="district" placeholder="District" value={address.district} onChange={handleAddressChange} required />
             <input type="text" name="pin" placeholder="PIN Code" value={address.pin} onChange={handleAddressChange} required />
             <input type="text" name="mobile" placeholder="Mobile Number" value={address.mobile} onChange={handleAddressChange} required />
-            
+
             <label>
                 <input type="radio" name="addressType" value="home" checked={address.addressType === "home"} onChange={handleAddressChange} /> Home
             </label>
@@ -114,12 +123,7 @@ const CheckoutScreen = () => {
             </label>
 
             <p>Total: ${(cartTotal / 100).toFixed(2)} CAD</p>
-
-            <button 
-                onClick={handlePayment} 
-                disabled={loading} 
-                className="btn btn-primary"
-            >
+            <button onClick={handlePayment} disabled={loading} className="btn btn-primary">
                 {loading ? "Processing..." : "Pay Now"}
             </button>
         </div>
