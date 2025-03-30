@@ -1,10 +1,13 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { FaHeart } from "react-icons/fa";
 
 const Navbar = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const navigate = useNavigate();
   const cartItems = useSelector((state) => state.cart.cartItems);
+  const wishlistItems = useSelector((state) => state.wishlist.wishlistItems);
+
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
@@ -75,6 +78,11 @@ const Navbar = () => {
                           </span>
                         )}
                       </Link>
+                    </li>
+                    <li>
+                    <Link to="/wishlist">
+                <FaHeart /> Wishlist ({wishlistItems.length})
+            </Link>
                     </li>
                   </>
                 )}
