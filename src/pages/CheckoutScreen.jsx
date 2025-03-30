@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import "../CheckoutScreen.css";
+import { clearCart } from "../redux/cartSlice";
 
 
 const CheckoutScreen = () => {
@@ -130,6 +131,7 @@ const CheckoutScreen = () => {
             console.log("✅ Payment Response:", paymentResponse.data);
 
             if (paymentResponse.data?.url) {
+                dispatch(clearCart());
                 window.location.href = paymentResponse.data.url;
             } else {
                 throw new Error("Payment gateway URL not received");
