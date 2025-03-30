@@ -1,6 +1,5 @@
 {
-  "redirects": [
-    { "source": "/verify-email/:token", "destination": "/" },
+  "rewrites": [
     { "source": "/(.*)", "destination": "/" }
   ]
 }
