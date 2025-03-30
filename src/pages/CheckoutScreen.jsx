@@ -4,12 +4,12 @@ import axios from "axios";
 
 const CheckoutScreen = () => {
     const [loading, setLoading] = useState(false);
-    //const cartTotal = 5000; // ✅ Example total (50.00 CAD in cents)
-    const cartItems = useSelector((state) => state.cart.cartItems);
-    const orderId = localStorage.getItem("orderId"); // ✅ Retrieve stored order ID
-    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || null; 
+    const [address, setAddress] = useState(""); // ✅ State for address
 
-    const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0); // ✅ Calculate total price
+    const cartItems = useSelector((state) => state.cart.cartItems);
+    const userInfo = JSON.parse(localStorage.getItem("userInfo")) || null;
+
+    const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0); 
 
     const handlePayment = async () => {
         if (!userInfo) {
@@ -21,6 +21,11 @@ const CheckoutScreen = () => {
             alert("Your cart is empty! ❌");
             return;
         }
+
+        if (!address.trim()) {
+            alert("Please enter a delivery address! ❌");
+            return;
+        }
     
         setLoading(true);
         try {
@@ -29,27 +34,28 @@ const CheckoutScreen = () => {
                 "https://bazario-backend-iqac.onrender.com/api/orders",
                 {
                     items: cartItems.map((item) => ({
-                        productId: item._id,  // ✅ Ensure correct productId
+                        productId: item._id,  
                         name: item.name,
                         quantity: item.quantity,
                         price: item.price,
                     })),
                     totalAmount: cartTotal,
+                    deliveryAddress: address, // ✅ Include delivery address
                 },
                 {
-                    headers: { Authorization: `Bearer ${userInfo.token}` }, // ✅ Send token for authentication
+                    headers: { Authorization: `Bearer ${userInfo.token}` }, 
                 }
             );
     
-            const orderId = orderResponse.data._id; // ✅ Get Order ID
+            const orderId = orderResponse.data._id;
             console.log("✅ Order Created, Order ID:", orderId);
     
             // ✅ Step 2: Proceed with Payment
             const { data } = await axios.post(
                 "https://bazario-backend-iqac.onrender.com/api/payments/pay",
                 {
-                    orderId, // ✅ Include Order ID in payment request
-                    amount: cartTotal * 100, // Convert to cents
+                    orderId, 
+                    amount: cartTotal * 100, 
                     currency: "cad",
                 }
             );
@@ -57,7 +63,7 @@ const CheckoutScreen = () => {
             console.log("✅ Payment Session Created:", data);
     
             if (data.url) {
-                window.location.href = data.url; // Redirect to Stripe Checkout
+                window.location.href = data.url; 
             } else {
                 alert("Payment Failed: No redirect URL received ❌");
             }
@@ -69,13 +75,25 @@ const CheckoutScreen = () => {
             setLoading(false);
         }
     };
-    
-
 
     return (
         <div className="container mt-5">
             <h2>Checkout</h2>
-            <p>Total: ${(cartTotal / 100).toFixed(2)} CAD</p>  {/* ✅ Convert cents to dollars */}
+            <p>Total: ${(cartTotal / 100).toFixed(2)} CAD</p>
+
+            {/* ✅ Address Input */}
+            <div className="mb-3">
+                <label htmlFor="address" className="form-label">Delivery Address:</label>
+                <input
+                    type="text"
+                    id="address"
+                    className="form-control"
+                    placeholder="Enter your address"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                />
+            </div>
+
             <button 
                 onClick={handlePayment} 
                 disabled={loading} 
