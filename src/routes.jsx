@@ -34,6 +34,7 @@ const AppRoutes = () => {
        {/* ✅ Admin Routes */}
        <Route path="/admin/orders" element={<ManageOrders />} />
       <Route path="/admin/orders/:id" element={<OrderDetails />} />
+      <Route path="/test" element={<h1>Test Page</h1>} />
      
 
     </Routes>
