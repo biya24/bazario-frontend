@@ -1,26 +1,29 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { verifyEmail } from "../api/auth"; // ✅ Import API function
+import { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
-const VerifyEmail = () => {
+const EmailVerification = () => {
   const { token } = useParams();
-  const navigate = useNavigate();
-  const [message, setMessage] = useState("Verifying...");
 
   useEffect(() => {
-    const verify = async () => {
-      try {
-        const data = await verifyEmail(token); // ✅ Call API function
-        setMessage(data.message);
-        setTimeout(() => navigate("/login"), 3000);
-      } catch (error) {
-        setMessage("Invalid or expired link.");
-      }
-    };
-    verify();
-  }, [token, navigate]);
+    console.log("🔹 Extracted Token:", token); // Debugging step
+    if (token) {
+      verifyEmail(token);
+    }
+  }, [token]);
 
-  return <div className="container mt-5"><h3>{message}</h3></div>;
+  const verifyEmail = async (token) => {
+    try {
+      const res = await axios.get(
+        `https://bazario-backend-iqac.onrender.com/api/users/verify-email/${token}`
+      );
+      console.log("✅ Verification Response:", res.data);
+    } catch (error) {
+      console.error("❌ Verification Error:", error);
+    }
+  };
+
+  return <h2>Verifying Email...</h2>;
 };
 
-export default VerifyEmail;
+export default EmailVerification;
