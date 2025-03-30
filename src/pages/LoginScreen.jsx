@@ -33,6 +33,9 @@ const LoginScreen = () => {
       localStorage.setItem("userInfo", JSON.stringify(data)); // Store user data
       navigate("/dashboard");
     } catch (err) {
+      if (err.response?.data?.message === "Please verify your email before logging in") {
+        setShowResend(true); // ✅ This ensures the button appears if verification is required
+    }
       setError(err.response?.data?.message || "Invalid email or password.");
     } finally {
       setLoading(false);
