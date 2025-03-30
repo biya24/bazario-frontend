@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
 import "../CheckoutScreen.css";
 import { clearCart } from "../redux/cartSlice";
+import { useDispatch } from 'react-redux';
 
 
 const CheckoutScreen = () => {
+    const dispatch = useDispatch();
     const [loading, setLoading] = useState({
         order: false,
         payment: false
