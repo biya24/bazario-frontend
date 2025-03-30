@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner } from "react-icons/fa";
+import "./CheckoutScreen.css";
+
 
 const CheckoutScreen = () => {
     const [loading, setLoading] = useState({
