@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 
 const UserDashboard = () => {
@@ -93,7 +94,7 @@ const UserDashboard = () => {
             <h3>My Orders</h3>
             <ul>
                 {orders.length > 0 ? (
-                    <Link className="btn text-white" style={{ backgroundColor: "#90e0ef" }} to="/orders">My Orders</Link>
+                    <Link className="btn text-white" style={{ backgroundColor: "#90e0ef" }} to="/orders">Go to My Orders</Link>
                 ) : (
                     <p>No orders found.</p>
                 )}
