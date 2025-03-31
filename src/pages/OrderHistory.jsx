@@ -136,7 +136,10 @@ const OrderHistory = () => {
     return (
         <div className="container mt-5">
             <h2>My Orders</h2>
-            {orders.length === 0 ? (
+             {/* ✅ Show loading message */}
+             {loading ? (
+                <p>Loading your orders, please wait...</p>
+            ) : orders.length === 0 ? (
                 <p>No orders found.</p>
             ) : (
                 <table className="table table-striped">
