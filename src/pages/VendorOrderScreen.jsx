@@ -71,8 +71,10 @@ const VendorOrderScreen = () => {
                 <label className="form-label"><strong>Status:</strong></label>
                 <select
                     className="form-select"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    value={status || order.status} // Ensures it gets the latest order status
+                    onChange={(e) => {
+                        setStatus(e.target.value); // Updates status state
+                    }}
                     disabled={updating}
                 >
                     <option value="Pending">Pending</option>
@@ -80,7 +82,7 @@ const VendorOrderScreen = () => {
                     <option value="Delivered">Delivered</option>
                     <option value="Canceled">Canceled</option>
                 </select>
-                <button 
+                <button
                     className="btn btn-primary mt-2"
                     onClick={updateStatus}
                     disabled={updating}
