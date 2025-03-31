@@ -13,7 +13,16 @@ const OrderHistory = () => {
                 const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders/my-orders", {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
-                setOrders(data);
+
+                // Fetch product names for each order
+                const updatedOrders = await Promise.all(
+                    data.map(async (order) => ({
+                        ...order,
+                        items: await fetchProductDetails(order.items),
+                    }))
+                );
+
+                setOrders(updatedOrders);
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
@@ -21,7 +30,28 @@ const OrderHistory = () => {
         fetchOrders();
     }, []);
 
-    // ✅ Cancel Order (Updates status instead of deleting)
+    // 🔹 Fetch product details for each item
+    const fetchProductDetails = async (items) => {
+        try {
+            const updatedItems = await Promise.all(
+                items.map(async (item) => {
+                    try {
+                        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
+                        return { ...item, name: data.name, image: data.image }; // Add product name & image
+                    } catch (error) {
+                        console.error(`Error fetching product ${item.productId}:`, error);
+                        return { ...item, name: "Unknown Product", image: "" }; // Handle missing product data
+                    }
+                })
+            );
+            return updatedItems;
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            return items;
+        }
+    };
+
+    // 🔹 Cancel Order (Now just updates status)
     const cancelOrder = async (orderId) => {
         if (!window.confirm("Are you sure you want to cancel this order?")) return;
         try {
@@ -38,17 +68,17 @@ const OrderHistory = () => {
         }
     };
 
-    // ✅ Reorder
+    // 🔹 Reorder
     const reorder = (order) => {
         alert(`Reordering items from order ${order._id}. Implement this feature.`);
     };
 
-    // ✅ Retry Payment (If failed)
+    // 🔹 Retry Payment (If failed)
     const retryPayment = (orderId) => {
         alert(`Retrying payment for order ${orderId}. Implement payment gateway logic.`);
     };
 
-    // ✅ Return Order (Only if delivered)
+    // 🔹 Return Order (Only if delivered)
     const returnOrder = async (orderId) => {
         if (!window.confirm("Are you sure you want to return this order?")) return;
         try {
@@ -85,7 +115,7 @@ const OrderHistory = () => {
                     <tbody>
                         {orders.map(order => (
                             <tr key={order._id}>
-                                {/* ✅ Clickable Order ID (Ensure route exists) */}
+                                {/* ✅ Clickable Order ID */}
                                 <td>
                                     <Link to={`/order/${order._id}`} className="text-primary">
                                         {order._id}
@@ -100,7 +130,7 @@ const OrderHistory = () => {
                                     {order.items.map((item, index) => (
                                         <div key={index} className="mb-2">
                                             <Link to={`/product/${item.productId}`} className="text-decoration-none">
-                                                <img src={item.image} alt={item.name} width="50" className="me-2" />
+                                                <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-2" />
                                                 <strong>{item.name}</strong> (Qty: {item.quantity})
                                             </Link>
                                         </div>
