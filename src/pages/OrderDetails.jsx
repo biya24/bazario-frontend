@@ -36,14 +36,10 @@ const OrderDetailsUser = () => {
                 items.map(async (item) => {
                     try {
                         const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
-                        return { 
-                            ...item, 
-                            name: data.name, 
-                            image: data.images?.[0] || "/placeholder.png" // Access the first image in the images array
-                        }; 
+                        return { ...item, name: data.name, image: data.images?.[0] }; // Add product name & image
                     } catch (error) {
                         console.error(`Error fetching product ${item.productId}:`, error);
-                        return { ...item, name: "Unknown Product", image: "/placeholder.png" }; // Handle missing product data
+                        return { ...item, name: "Unknown Product", image: "" }; // Handle missing product data
                     }
                 })
             );
