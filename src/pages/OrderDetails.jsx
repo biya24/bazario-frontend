@@ -14,6 +14,7 @@ const OrderDetailsUser = () => {
                 const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/orders/${id}`, {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
+                console.log("Order Data:", data); // Log the fetched order data
 
                 // Fetch product details for each item
                 const updatedOrder = {
@@ -32,11 +33,11 @@ const OrderDetailsUser = () => {
     // 🔹 Fetch product details for each item in the order
     const fetchProductDetails = async (items) => {
         try {
-            // Fetch each product's name and image based on productId
             const updatedItems = await Promise.all(
                 items.map(async (item) => {
                     try {
                         const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
+                        console.log("Fetched Product:", data); // Log the fetched product details
                         return { 
                             ...item, 
                             name: data.name, 
