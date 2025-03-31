@@ -93,11 +93,7 @@ const UserDashboard = () => {
             <h3>My Orders</h3>
             <ul>
                 {orders.length > 0 ? (
-                    orders.map((order) => (
-                        <li key={order._id}>
-                            Order #{order._id} - Status: {order.status} - Total: ${order.totalAmount}
-                        </li>
-                    ))
+                    <Link className="btn text-white" style={{ backgroundColor: "#90e0ef" }} to="/orders">My Orders</Link>
                 ) : (
                     <p>No orders found.</p>
                 )}
