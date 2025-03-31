@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AddProductForm from "../components/AddProductForm";
-import EditProductModal from "../components/EditProductModal"; // Import the modal component
+import EditProductModal from "../components/EditProductModal";
 
 const VendorDashboard = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
-    const [selectedProduct, setSelectedProduct] = useState(null); // For editing
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
     const fetchProducts = async () => {
         try {
@@ -30,6 +30,24 @@ const VendorDashboard = () => {
         }
     };
 
+    const handleDelete = async (productId) => {
+        if (!window.confirm("Are you sure you want to delete this product?")) return;
+
+        try {
+            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            if (!userInfo || !userInfo.token) throw new Error("User not authenticated");
+
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+
+            await axios.delete(`https://bazario-backend-iqac.onrender.com/api/products/${productId}`, config);
+
+            setProducts(products.filter((product) => product._id !== productId));
+            alert("✅ Product deleted successfully!");
+        } catch (error) {
+            alert(`❌ Error: ${error.response?.data?.message || error.message}`);
+        }
+    };
+
     useEffect(() => {
         fetchProducts();
     }, []);
@@ -38,12 +56,10 @@ const VendorDashboard = () => {
         <div className="container mt-5">
             <h2 className="text-center mb-4 text-primary">Vendor Dashboard</h2>
 
-            {/* Add Product Form */}
             <div className="card p-4 mb-4 shadow">
                 <AddProductForm onProductAdded={fetchProducts} />
             </div>
 
-            {/* Product List Section */}
             <div className="card p-4 shadow">
                 <h4 className="mb-3 text-info">Your Products</h4>
 
@@ -77,7 +93,13 @@ const VendorDashboard = () => {
                                                 className="btn btn-warning btn-sm me-2"
                                                 onClick={() => setSelectedProduct(product)}
                                             >
-                                                Edit
+                                                ✏️ Edit
+                                            </button>
+                                            <button
+                                                className="btn btn-danger btn-sm"
+                                                onClick={() => handleDelete(product._id)}
+                                            >
+                                                🗑 Delete
                                             </button>
                                         </td>
                                     </tr>
@@ -88,7 +110,6 @@ const VendorDashboard = () => {
                 )}
             </div>
 
-            {/* Edit Product Modal */}
             {selectedProduct && (
                 <EditProductModal 
                     product={selectedProduct} 
