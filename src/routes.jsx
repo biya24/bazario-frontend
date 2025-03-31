@@ -15,6 +15,7 @@ import ManageOrders from "./components/Admin/ManageOrders";
 import OrderDetails from "./components/Admin/OrderDetails";
 import VerifyEmail from "./pages/VerifyEmail";
 import WishlistScreen from "./pages/WishlistScreen";
+import MySalesScreen from "./pages/MySalesScreen";
 
 const AppRoutes = () => {
   return (
@@ -33,6 +34,7 @@ const AppRoutes = () => {
       <Route path="/payment-success" element={<PaymentSuccess />} />
       <Route path="/orders" element={<OrderHistory />} />
       <Route path="/wishlist" element={<WishlistScreen />} />
+      <Route path="/my-sales" element={<MySalesScreen />} />
        {/* ✅ Admin Routes */}
        <Route path="/admin/orders" element={<ManageOrders />} />
       <Route path="/admin/orders/:id" element={<OrderDetails />} />

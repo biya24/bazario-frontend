@@ -56,7 +56,7 @@ const Navbar = () => {
                       <Link className="btn text-white" style={{ backgroundColor: "#0096c7" }} to="/vendor-dashboard">Vendor Dashboard</Link>
                     </li>
                     <li className="nav-item">
-                      <Link className="btn text-white" style={{ backgroundColor: "#00b4d8" }} to="/vendor-orders">My Sales</Link>
+                      <Link className="btn text-white" style={{ backgroundColor: "#00b4d8" }} to="/my-sales">My Sales</Link>
                     </li>
                   </>
                 )}
