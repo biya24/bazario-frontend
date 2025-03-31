@@ -136,7 +136,7 @@ const ProductScreen = () => {
         </button>
 
         {/* ✅ Review Form */}
-        {userInfo && userInfo.role === "customer" && (
+        {/* {userInfo && userInfo.role === "customer" && (
           <div className="mt-4">
             <h4>Write a Review</h4>
             <div>
@@ -169,7 +169,7 @@ const ProductScreen = () => {
               Submit Review
             </button>
           </div>
-        )}
+        )} */}
 
         {/* ✅ Display Reviews */}
         <div className="mt-4">
