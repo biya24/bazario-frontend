@@ -59,7 +59,7 @@ const MySalesScreen = () => {
             {sales.map((sale) => (
               <tr key={sale._id}>
                 <td>{sale._id}</td>
-                <td>{sale.buyer?.name || "Unknown"}</td>
+                <td>{sale.customerId?.name || "Unknown"}</td> // ✅ Uses populated customer name
                 <td>{new Date(sale.createdAt).toLocaleDateString()}</td>
                 <td>${sale.totalAmount.toFixed(2)}</td>
                 <td>{sale.status}</td>
