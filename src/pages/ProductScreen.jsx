@@ -11,6 +11,9 @@ const ProductScreen = () => {
   const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
   const wishlist = useSelector((state) => state.wishlist.wishlistItems);
   const isWishlisted = wishlist.some((item) => item._id === id);
@@ -25,7 +28,16 @@ const ProductScreen = () => {
       );
       setProduct(data);
     };
+
+    const fetchReviews = async () => {
+      const { data } = await axios.get(
+        `https://bazario-backend-iqac.onrender.com/api/reviews/${id}`
+      );
+      setReviews(data);
+    };
+
     fetchProduct();
+    fetchReviews();
   }, [id]);
 
   // ✅ Add to Cart with Login Check
@@ -51,6 +63,40 @@ const ProductScreen = () => {
     } else {
       dispatch(addToWishlist(product));
       alert("✅ Product added to wishlist!");
+    }
+  };
+
+  // ✅ Submit Review
+  const submitReviewHandler = async () => {
+    if (!userInfo || !userInfo.token) {
+      alert("❌ Please log in to submit a review.");
+      return;
+    }
+
+    if (!rating || rating < 1 || rating > 5) {
+      alert("❌ Please provide a valid rating (1-5).");
+      return;
+    }
+
+    try {
+      const { data } = await axios.post(
+        "https://bazario-backend-iqac.onrender.com/api/reviews",
+        {
+          productId: id,
+          rating,
+          comment,
+        },
+        {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        }
+      );
+      alert("✅ Review submitted successfully!");
+      setReviews([data.review, ...reviews]); // Add new review to the list
+      setRating(0); // Clear rating
+      setComment(""); // Clear comment
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      alert("❌ Failed to submit review.");
     }
   };
 
@@ -88,6 +134,60 @@ const ProductScreen = () => {
         <button className="btn btn-success" onClick={addToCartHandler}>
           Add to Cart
         </button>
+
+        {/* ✅ Review Form */}
+        {userInfo && userInfo.role === "customer" && (
+          <div className="mt-4">
+            <h4>Write a Review</h4>
+            <div>
+              <label>Rating (1 to 5):</label>
+              <select
+                className="form-select w-25 mb-3"
+                value={rating}
+                onChange={(e) => setRating(Number(e.target.value))}
+              >
+                {[1, 2, 3, 4, 5].map((x) => (
+                  <option key={x} value={x}>
+                    {x}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label>Comment:</label>
+              <textarea
+                className="form-control"
+                rows="3"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+              ></textarea>
+            </div>
+            <button
+              className="btn btn-primary mt-3"
+              onClick={submitReviewHandler}
+            >
+              Submit Review
+            </button>
+          </div>
+        )}
+
+        {/* ✅ Display Reviews */}
+        <div className="mt-4">
+          <h4>Customer Reviews</h4>
+          {reviews.length === 0 ? (
+            <p>No reviews yet.</p>
+          ) : (
+            <ul className="list-group">
+              {reviews.map((review) => (
+                <li key={review._id} className="list-group-item">
+                  <strong>{review.customerId.name}</strong> -{" "}
+                  {review.rating} Stars
+                  <p>{review.comment}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
     </div>
   );
