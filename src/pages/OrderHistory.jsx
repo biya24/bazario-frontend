@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
@@ -20,20 +21,17 @@ const OrderHistory = () => {
         fetchOrders();
     }, []);
 
-    // ✅ Edit Order (Only if pending)
-    const editOrder = (orderId) => {
-        alert(`Editing order ${orderId} - Implement edit functionality here.`);
-    };
-
-    // ✅ Cancel Order (Only if not shipped)
+    // ✅ Cancel Order (Updates status instead of deleting)
     const cancelOrder = async (orderId) => {
         if (!window.confirm("Are you sure you want to cancel this order?")) return;
         try {
-            await axios.delete(`https://bazario-backend-iqac.onrender.com/api/orders/${orderId}`, {
+            await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`, {}, {
                 headers: { Authorization: `Bearer ${userInfo.token}` },
             });
             alert("Order cancelled successfully!");
-            setOrders(orders.filter(order => order._id !== orderId)); // Remove from UI
+            setOrders(orders.map(order =>
+                order._id === orderId ? { ...order, status: "Cancelled" } : order
+            ));
         } catch (error) {
             console.error("Error cancelling order:", error);
             alert("Failed to cancel order.");
@@ -58,7 +56,7 @@ const OrderHistory = () => {
                 headers: { Authorization: `Bearer ${userInfo.token}` },
             });
             alert("Return request submitted successfully!");
-            setOrders(orders.map(order => 
+            setOrders(orders.map(order =>
                 order._id === orderId ? { ...order, status: "Return Requested" } : order
             ));
         } catch (error) {
@@ -80,26 +78,38 @@ const OrderHistory = () => {
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
+                            <th>Products</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {orders.map(order => (
                             <tr key={order._id}>
-                                <td>{order._id}</td>
+                                {/* ✅ Clickable Order ID */}
+                                <td>
+                                    <Link to={`/order/${order._id}`} className="text-primary">
+                                        {order._id}
+                                    </Link>
+                                </td>
                                 <td>${order.totalAmount}</td>
                                 <td>{order.status}</td>
                                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                
+                                {/* ✅ Display Product Details */}
                                 <td>
-                                    {/* ✅ Edit (Only if pending) */}
-                                    {order.status === "Pending" && (
-                                        <button className="btn btn-warning btn-sm me-2" onClick={() => editOrder(order._id)}>
-                                            Edit
-                                        </button>
-                                    )}
+                                    {order.items.map((item, index) => (
+                                        <div key={index} className="mb-2">
+                                            <Link to={`/product/${item.productId}`} className="text-decoration-none">
+                                                <img src={item.image} alt={item.name} width="50" className="me-2" />
+                                                {item.name} ({item.quantity})
+                                            </Link>
+                                        </div>
+                                    ))}
+                                </td>
 
-                                    {/* ✅ Cancel (Only if not shipped and not delivered) */}
-                                    {order.status !== "Shipped" && order.status !== "Delivered" && (
+                                <td>
+                                    {/* ✅ Cancel Order (Now just updates status) */}
+                                    {order.status !== "Shipped" && order.status !== "Delivered" && order.status !== "Cancelled" && (
                                         <button className="btn btn-danger btn-sm me-2" onClick={() => cancelOrder(order._id)}>
                                             Cancel
                                         </button>
