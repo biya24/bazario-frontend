@@ -14,13 +14,41 @@ const OrderDetailsUser = () => {
                 const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/orders/${id}`, {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
-                setOrder(data);
+
+                // Fetch product names for each item
+                const updatedOrder = {
+                    ...data,
+                    items: await fetchProductDetails(data.items),
+                };
+
+                setOrder(updatedOrder);
             } catch (error) {
                 console.error("Error fetching order details:", error);
             }
         };
         fetchOrderDetails();
     }, [id, userInfo]);
+
+    // 🔹 Fetch product details for each item in the order
+    const fetchProductDetails = async (items) => {
+        try {
+            const updatedItems = await Promise.all(
+                items.map(async (item) => {
+                    try {
+                        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
+                        return { ...item, name: data.name, image: data.image }; // Add product name & image
+                    } catch (error) {
+                        console.error(`Error fetching product ${item.productId}:`, error);
+                        return { ...item, name: "Unknown Product", image: "/placeholder.png" }; // Handle missing product data
+                    }
+                })
+            );
+            return updatedItems;
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            return items;
+        }
+    };
 
     if (!order) return <p>Loading order details...</p>;
 
@@ -36,7 +64,7 @@ const OrderDetailsUser = () => {
             <ul className="list-group">
                 {order.items.map((item) => (
                     <li key={item.productId} className="list-group-item d-flex align-items-center">
-                        <img src={item.image} alt={item.name} width="50" className="me-3" />
+                        <img src={item.images?.[0] || "/placeholder.png"} alt={item.name} width="50" className="me-3" />
                         <div>
                             <strong>{item.name}</strong> (Qty: {item.quantity})
                         </div>
