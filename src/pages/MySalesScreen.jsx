@@ -15,7 +15,7 @@ const MySalesScreen = () => {
       if (!userInfo) return;
 
       try {
-        const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders", {
+        const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders/vendor", {
           headers: { Authorization: `Bearer ${userInfo.token}` },
         });
         setSales(data);
