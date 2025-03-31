@@ -50,6 +50,23 @@ const OrderHistory = () => {
         alert(`Retrying payment for order ${orderId}. Implement payment gateway logic.`);
     };
 
+    // ✅ Return Order (Only if delivered)
+    const returnOrder = async (orderId) => {
+        if (!window.confirm("Are you sure you want to return this order?")) return;
+        try {
+            await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/return/${orderId}`, {}, {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            });
+            alert("Return request submitted successfully!");
+            setOrders(orders.map(order => 
+                order._id === orderId ? { ...order, status: "Return Requested" } : order
+            ));
+        } catch (error) {
+            console.error("Error processing return:", error);
+            alert("Failed to process return request.");
+        }
+    };
+
     return (
         <div className="container mt-5">
             <h2>My Orders</h2>
@@ -81,8 +98,8 @@ const OrderHistory = () => {
                                         </button>
                                     )}
 
-                                    {/* ✅ Cancel (Only if not shipped) */}
-                                    {order.status !== "Shipped" && (
+                                    {/* ✅ Cancel (Only if not shipped and not delivered) */}
+                                    {order.status !== "Shipped" && order.status !== "Delivered" && (
                                         <button className="btn btn-danger btn-sm me-2" onClick={() => cancelOrder(order._id)}>
                                             Cancel
                                         </button>
@@ -97,6 +114,13 @@ const OrderHistory = () => {
                                     {order.status === "Payment Failed" && (
                                         <button className="btn btn-success btn-sm" onClick={() => retryPayment(order._id)}>
                                             Retry Payment
+                                        </button>
+                                    )}
+
+                                    {/* ✅ Return Order (Only if delivered) */}
+                                    {order.status === "Delivered" && (
+                                        <button className="btn btn-info btn-sm" onClick={() => returnOrder(order._id)}>
+                                            Return
                                         </button>
                                     )}
                                 </td>
