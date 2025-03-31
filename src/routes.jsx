@@ -17,6 +17,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import WishlistScreen from "./pages/WishlistScreen";
 import MySalesScreen from "./pages/MySalesScreen";
 import VendorOrderScreen from "./pages/VendorOrderScreen"
+import OrderDetails from "./pages/OrderDetails";
 
 const AppRoutes = () => {
   return (
@@ -37,6 +38,7 @@ const AppRoutes = () => {
       <Route path="/wishlist" element={<WishlistScreen />} />
       <Route path="/my-sales" element={<MySalesScreen />} />
       <Route path="/vendor/order/:id" element={<VendorOrderScreen />} />
+      <Route path="/order/:id" element={<OrderDetails />} />
        {/* ✅ Admin Routes */}
        <Route path="/admin/orders" element={<ManageOrders />} />
       <Route path="/admin/orders/:id" element={<OrderDetails />} />
