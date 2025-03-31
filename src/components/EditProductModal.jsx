@@ -12,6 +12,7 @@ const EditProductModal = ({ product, onClose, onProductUpdated }) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        console.log("Updating product with ID:", product._id); // Debugging
         setLoading(true);
         setMessage("");
 
