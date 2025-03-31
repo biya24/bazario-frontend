@@ -80,7 +80,7 @@ const Navbar = () => {
                       </Link>
                     </li>
                     <li>
-                    <Link to="/wishlist">
+                    <Link className="btn text-white" style={{ backgroundColor: "#90e0ef" }} to="/wishlist">
                 <FaHeart /> Wishlist ({wishlistItems.length})
             </Link>
                     </li>
