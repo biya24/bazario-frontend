@@ -54,6 +54,12 @@ const AddProductForm = ({ onProductAdded }) => {
             });
 
             setMessage("✅ Product added successfully!");
+            setName("");
+            setDescription("");
+            setPrice("");
+            setStock("");
+            setCategory("");
+            setImage(null);
             onProductAdded(); // Refresh product list
         } catch (error) {
             setMessage(`❌ Error: ${error.response?.data?.message || error.message}`);
@@ -63,18 +69,55 @@ const AddProductForm = ({ onProductAdded }) => {
     };
 
     return (
-        <div className="card p-3 mt-3">
-            <h3>Add New Product</h3>
-            {message && <p>{message}</p>}
+        <div className="card shadow p-4 mt-4">
+            <h3 className="text-center text-primary">Add New Product</h3>
+
+            {message && (
+                <p className={`text-center ${message.includes("✅") ? "text-success" : "text-danger"}`}>
+                    {message}
+                </p>
+            )}
+
             <form onSubmit={handleSubmit}>
-                <input type="text" placeholder="Product Name" value={name} onChange={(e) => setName(e.target.value)} required />
-                <input type="text" placeholder="Description" value={description} onChange={(e) => setDescription(e.target.value)} required />
-                <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} required />
-                <input type="number" placeholder="Stock" value={stock} onChange={(e) => setStock(e.target.value)} required />
-                <input type="text" placeholder="Category" value={category} onChange={(e) => setCategory(e.target.value)} required />
-                <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
-                <button type="submit" disabled={loading} className="btn btn-primary">
-                    {loading ? "Adding..." : "Add Product"}
+                <div className="mb-3">
+                    <label className="form-label">Product Name</label>
+                    <input type="text" className="form-control" placeholder="Enter product name" 
+                        value={name} onChange={(e) => setName(e.target.value)} required />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Description</label>
+                    <textarea className="form-control" placeholder="Enter product description" 
+                        value={description} onChange={(e) => setDescription(e.target.value)} required />
+                </div>
+
+                <div className="row">
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label">Price ($)</label>
+                        <input type="number" className="form-control" placeholder="Enter price" 
+                            value={price} onChange={(e) => setPrice(e.target.value)} required />
+                    </div>
+
+                    <div className="col-md-6 mb-3">
+                        <label className="form-label">Stock</label>
+                        <input type="number" className="form-control" placeholder="Enter stock quantity" 
+                            value={stock} onChange={(e) => setStock(e.target.value)} required />
+                    </div>
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Category</label>
+                    <input type="text" className="form-control" placeholder="Enter product category" 
+                        value={category} onChange={(e) => setCategory(e.target.value)} required />
+                </div>
+
+                <div className="mb-3">
+                    <label className="form-label">Product Image</label>
+                    <input type="file" className="form-control" onChange={(e) => setImage(e.target.files[0])} required />
+                </div>
+
+                <button type="submit" className="btn btn-success w-100" disabled={loading}>
+                    {loading ? "Adding Product..." : "Add Product"}
                 </button>
             </form>
         </div>
