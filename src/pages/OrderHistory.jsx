@@ -78,7 +78,7 @@ const OrderHistory = () => {
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
-                            <th>Products</th>
+                            <th>View Products</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -121,7 +121,7 @@ const OrderHistory = () => {
                                     </button>
 
                                     {/* ✅ Retry Payment (If failed) */}
-                                    {order.status === "Payment Failed" && (
+                                    {order.status === "Pending" && (
                                         <button className="btn btn-success btn-sm" onClick={() => retryPayment(order._id)}>
                                             Retry Payment
                                         </button>
