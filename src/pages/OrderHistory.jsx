@@ -78,14 +78,14 @@ const OrderHistory = () => {
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
-                            <th>View Products</th>
+                            <th>Products</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {orders.map(order => (
                             <tr key={order._id}>
-                                {/* ✅ Clickable Order ID */}
+                                {/* ✅ Clickable Order ID (Ensure route exists) */}
                                 <td>
                                     <Link to={`/order/${order._id}`} className="text-primary">
                                         {order._id}
@@ -95,13 +95,13 @@ const OrderHistory = () => {
                                 <td>{order.status}</td>
                                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                                 
-                                {/* ✅ Display Product Details */}
+                                {/* ✅ Show Product Name & Quantity Correctly */}
                                 <td>
                                     {order.items.map((item, index) => (
                                         <div key={index} className="mb-2">
                                             <Link to={`/product/${item.productId}`} className="text-decoration-none">
                                                 <img src={item.image} alt={item.name} width="50" className="me-2" />
-                                                {item.name} ({item.quantity})
+                                                <strong>{item.name}</strong> (Qty: {item.quantity})
                                             </Link>
                                         </div>
                                     ))}
