@@ -64,9 +64,9 @@ const MySalesScreen = () => {
                 <td>${sale.totalAmount.toFixed(2)}</td>
                 <td>{sale.status}</td>
                 <td>
-                  <Link to={`/order/${sale._id}`} className="btn btn-primary btn-sm">
-                    View Order
-                  </Link>
+                <Link to={`/vendor/order/${sale._id}`} className="btn btn-primary">
+                  View Details
+                </Link>
                 </td>
               </tr>
             ))}
