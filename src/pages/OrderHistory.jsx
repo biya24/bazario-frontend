@@ -79,9 +79,56 @@ const OrderHistory = () => {
     };
 
     // 🔹 Retry Payment (If failed)
-    const retryPayment = (orderId) => {
-        alert(`Retrying payment for order ${orderId}. Implement payment gateway logic.`);
+    const retryPayment = async (orderId) => {
+        try {
+            const { data } = await axios.put(
+                `https://bazario-backend-iqac.onrender.com/api/orders/retry-payment/${orderId}`,
+                {},
+                { headers: { Authorization: `Bearer ${userInfo.token}` } }
+            );
+    
+            if (data.url) {
+                window.location.href = data.url; // Redirect to Stripe Checkout
+            } else {
+                alert("Failed to retrieve payment URL.");
+            }
+        } catch (error) {
+            console.error("Error retrying payment:", error);
+            alert("Failed to retry payment. Please try again.");
+        }
     };
+    
+    const updateOrderAfterPayment = async (req, res) => {
+        try {
+            const { session_id } = req.body;
+    
+            if (!session_id) {
+                return res.status(400).json({ message: "Session ID is required" });
+            }
+    
+            const session = await stripe.checkout.sessions.retrieve(session_id);
+    
+            if (session.payment_status !== "paid") {
+                return res.status(400).json({ message: "Payment not completed" });
+            }
+    
+            const orderId = session.metadata.orderId;
+    
+            const order = await Order.findById(orderId);
+            if (!order) {
+                return res.status(404).json({ message: "Order not found" });
+            }
+    
+            order.status = "Paid";
+            await order.save();
+    
+            res.json({ message: "Order status updated successfully", order });
+        } catch (error) {
+            console.error("Order Update Error:", error);
+            res.status(500).json({ message: "Server error", error: error.message });
+        }
+    };
+    
 
     // 🔹 Return Order (Only if delivered)
     const returnOrder = async (orderId) => {
