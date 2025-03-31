@@ -36,7 +36,11 @@ const OrderDetailsUser = () => {
                 items.map(async (item) => {
                     try {
                         const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
-                        return { ...item, name: data.name, image: data.image }; // Add product name & image
+                        return { 
+                            ...item, 
+                            name: data.name, 
+                            image: data.images?.[0] || "/placeholder.png" // Access the first image in the images array
+                        }; 
                     } catch (error) {
                         console.error(`Error fetching product ${item.productId}:`, error);
                         return { ...item, name: "Unknown Product", image: "/placeholder.png" }; // Handle missing product data
@@ -64,7 +68,7 @@ const OrderDetailsUser = () => {
             <ul className="list-group">
                 {order.items.map((item) => (
                     <li key={item.productId} className="list-group-item d-flex align-items-center">
-                        <img src={item.images?.[0] || "/placeholder.png"} alt={item.name} width="50" className="me-3" />
+                        <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-3" />
                         <div>
                             <strong>{item.name}</strong> (Qty: {item.quantity})
                         </div>
