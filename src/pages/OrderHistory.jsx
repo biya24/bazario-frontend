@@ -130,7 +130,7 @@ const OrderHistory = () => {
                                     {order.items.map((item, index) => (
                                         <div key={index} className="mb-2">
                                             <Link to={`/product/${item.productId}`} className="text-decoration-none">
-                                                <img src={item.images?.[0] || "/placeholder.png"} alt={item.name} width="50" className="me-2" />
+                                                <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-2" />
                                                 <strong>{item.name}</strong> (Qty: {item.quantity})
                                             </Link>
                                         </div>
