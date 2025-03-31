@@ -166,22 +166,27 @@ const OrderHistory = () => {
                                 {/* ✅ Show Product Name & Quantity Correctly */}
                                 <td>
                                     {order.items.map((item, index) => (
-                                        <div key={index} className="mb-2">
+                                        <div key={index} className="mb-3">
                                             <Link to={`/product/${item.productId}`} className="text-decoration-none">
                                                 <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-2" />
                                                 <strong>{item.name}</strong> (Qty: {item.quantity})
                                             </Link>
-                                             {/* Review Section */}
-                                             {order.status === "Delivered" && (
-                                                <div>
+                                            
+                                            {/* Review Section */}
+                                            {order.status === "Delivered" && (
+                                                <div className="mt-3 p-3 border rounded bg-light">
+                                                    <h5>Write a Review</h5>
                                                     <textarea
                                                         placeholder="Write your review..."
                                                         value={reviews[item.productId]?.comment || ""}
                                                         onChange={(e) => handleReviewChange(item.productId, "comment", e.target.value)}
+                                                        className="form-control mb-2"
+                                                        rows="3"
                                                     />
                                                     <select
                                                         value={reviews[item.productId]?.rating || ""}
                                                         onChange={(e) => handleReviewChange(item.productId, "rating", e.target.value)}
+                                                        className="form-select mb-2"
                                                     >
                                                         <option value="">Select Rating</option>
                                                         {[1, 2, 3, 4, 5].map((rating) => (
@@ -198,7 +203,6 @@ const OrderHistory = () => {
                                                     </button>
                                                 </div>
                                             )}
-
                                         </div>
                                     ))}
                                 </td>
