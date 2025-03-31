@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import "../styles/Wishlist.css";
 import { addToCart } from "../redux/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistSlice";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import "../styles/wishlist.css";
+
 
 const ProductScreen = () => {
   const { id } = useParams();
