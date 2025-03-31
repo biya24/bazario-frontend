@@ -47,4 +47,4 @@ const OrderDetailsUser = () => {
     );
 };
 
-export default OrderDetails;
+export default OrderDetailsUser;
