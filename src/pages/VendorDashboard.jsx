@@ -33,20 +33,48 @@ const VendorDashboard = () => {
     }, []);
 
     return (
-        <div className="container mt-4">
-            <h2>Vendor Dashboard</h2>
+        <div className="container mt-5">
+            <h2 className="text-center mb-4 text-primary">Vendor Dashboard</h2>
 
-            <AddProductForm onProductAdded={fetchProducts} />
+            {/* Add Product Form */}
+            <div className="card p-4 mb-4 shadow">
+                <h4 className="mb-3 text-success">Add New Product</h4>
+                <AddProductForm onProductAdded={fetchProducts} />
+            </div>
 
-            {loading ? <p>Loading products...</p> : products.length === 0 ? (
-                <p>No products found.</p>
-            ) : (
-                <ul>
-                    {products.map((product) => (
-                        <li key={product._id}>{product.name} - ${product.price}</li>
-                    ))}
-                </ul>
-            )}
+            {/* Product List Section */}
+            <div className="card p-4 shadow">
+                <h4 className="mb-3 text-info">Your Products</h4>
+
+                {loading ? (
+                    <p className="text-center text-warning">Loading products...</p>
+                ) : message ? (
+                    <p className="text-center text-danger">{message}</p>
+                ) : products.length === 0 ? (
+                    <p className="text-center text-muted">No products found.</p>
+                ) : (
+                    <div className="table-responsive">
+                        <table className="table table-striped table-bordered">
+                            <thead className="table-dark">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Product Name</th>
+                                    <th>Price ($)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map((product, index) => (
+                                    <tr key={product._id}>
+                                        <td>{index + 1}</td>
+                                        <td>{product.name}</td>
+                                        <td>${product.price.toFixed(2)}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
