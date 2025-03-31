@@ -20,6 +20,36 @@ const OrderHistory = () => {
         fetchOrders();
     }, []);
 
+    // ✅ Edit Order (Only if pending)
+    const editOrder = (orderId) => {
+        alert(`Editing order ${orderId} - Implement edit functionality here.`);
+    };
+
+    // ✅ Cancel Order (Only if not shipped)
+    const cancelOrder = async (orderId) => {
+        if (!window.confirm("Are you sure you want to cancel this order?")) return;
+        try {
+            await axios.delete(`https://bazario-backend-iqac.onrender.com/api/orders/${orderId}`, {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            });
+            alert("Order cancelled successfully!");
+            setOrders(orders.filter(order => order._id !== orderId)); // Remove from UI
+        } catch (error) {
+            console.error("Error cancelling order:", error);
+            alert("Failed to cancel order.");
+        }
+    };
+
+    // ✅ Reorder
+    const reorder = (order) => {
+        alert(`Reordering items from order ${order._id}. Implement this feature.`);
+    };
+
+    // ✅ Retry Payment (If failed)
+    const retryPayment = (orderId) => {
+        alert(`Retrying payment for order ${orderId}. Implement payment gateway logic.`);
+    };
+
     return (
         <div className="container mt-5">
             <h2>My Orders</h2>
@@ -33,6 +63,7 @@ const OrderHistory = () => {
                             <th>Total</th>
                             <th>Status</th>
                             <th>Date</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +73,33 @@ const OrderHistory = () => {
                                 <td>${order.totalAmount}</td>
                                 <td>{order.status}</td>
                                 <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                    {/* ✅ Edit (Only if pending) */}
+                                    {order.status === "Pending" && (
+                                        <button className="btn btn-warning btn-sm me-2" onClick={() => editOrder(order._id)}>
+                                            Edit
+                                        </button>
+                                    )}
+
+                                    {/* ✅ Cancel (Only if not shipped) */}
+                                    {order.status !== "Shipped" && (
+                                        <button className="btn btn-danger btn-sm me-2" onClick={() => cancelOrder(order._id)}>
+                                            Cancel
+                                        </button>
+                                    )}
+
+                                    {/* ✅ Reorder */}
+                                    <button className="btn btn-primary btn-sm me-2" onClick={() => reorder(order)}>
+                                        Reorder
+                                    </button>
+
+                                    {/* ✅ Retry Payment (If failed) */}
+                                    {order.status === "Payment Failed" && (
+                                        <button className="btn btn-success btn-sm" onClick={() => retryPayment(order._id)}>
+                                            Retry Payment
+                                        </button>
+                                    )}
+                                </td>
                             </tr>
                         ))}
                     </tbody>
