@@ -82,7 +82,7 @@ const OrderHistory = () => {
     const retryPayment = async (orderId) => {
         try {
             const { data } = await axios.put(
-                `https://bazario-backend-iqac.onrender.com/api/orders/retry-payment/${orderId}`,
+                `https://bazario-backend-iqac.onrender.com/api/payments/retry-payment/${orderId}`,
                 {},
                 { headers: { Authorization: `Bearer ${userInfo.token}` } }
             );
