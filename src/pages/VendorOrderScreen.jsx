@@ -7,6 +7,8 @@ const VendorOrderScreen = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [status, setStatus] = useState(""); // Order status
+    const [updating, setUpdating] = useState(false); // Loading state for update
 
     const userInfo = JSON.parse(localStorage.getItem("userInfo")) || null;
 
@@ -19,6 +21,7 @@ const VendorOrderScreen = () => {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
                 setOrder(data);
+                setStatus(data.status); // Set current order status
             } catch (err) {
                 setError(err.response?.data?.message || "Failed to fetch order details");
             } finally {
@@ -28,6 +31,26 @@ const VendorOrderScreen = () => {
 
         fetchOrderDetails();
     }, [id, userInfo]);
+
+    const updateStatus = async () => {
+        if (!status) return;
+        setUpdating(true);
+
+        try {
+            const { data } = await axios.put(
+                `https://bazario-backend-iqac.onrender.com/api/orders/${id}/status`,
+                { status }, // Send status as request body
+                { headers: { Authorization: `Bearer ${userInfo.token}` } }
+            );
+
+            setOrder(data.order); // Update state with the new order data
+            alert(`Order status updated to ${status} successfully!`); // Show confirmation
+        } catch (err) {
+            alert("Failed to update order status: " + (err.response?.data?.message || err.message));
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     if (!userInfo) {
         return <h2 className="text-center">Please <Link to="/login">Login</Link> to view order details</h2>;
@@ -42,7 +65,29 @@ const VendorOrderScreen = () => {
             <p><strong>Order ID:</strong> {order._id}</p>
             <p><strong>Buyer Name:</strong> {order.customerId?.name || "Unknown"}</p>
             <p><strong>Total Amount:</strong> ${order.totalAmount.toFixed(2)}</p>
-            <p><strong>Status:</strong> {order.status}</p>
+
+            {/* ✅ Order Status Update Dropdown */}
+            <div className="mb-3">
+                <label className="form-label"><strong>Status:</strong></label>
+                <select
+                    className="form-select"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    disabled={updating}
+                >
+                    <option value="Pending">Pending</option>
+                    <option value="Shipped">Shipped</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Canceled">Canceled</option>
+                </select>
+                <button 
+                    className="btn btn-primary mt-2"
+                    onClick={updateStatus}
+                    disabled={updating}
+                >
+                    {updating ? "Updating..." : "Update Status"}
+                </button>
+            </div>
 
             <h3>Items:</h3>
             <table className="table table-bordered">
