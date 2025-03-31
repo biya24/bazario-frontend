@@ -5,6 +5,7 @@ import axios from "axios";
 import { addToCart } from "../redux/cartSlice";
 import { addToWishlist, removeFromWishlist } from "../redux/wishlistSlice";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import "../styles/wishlist.css";
 
 const ProductScreen = () => {
   const { id } = useParams();
@@ -100,6 +101,18 @@ const ProductScreen = () => {
     }
   };
 
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <span key={i} className={`star ${i < rating ? "filled" : ""}`}>
+          ★
+        </span>
+      );
+    }
+    return stars;
+  };
+
   if (!product) return <h2>Loading...</h2>;
 
   return (
@@ -180,8 +193,10 @@ const ProductScreen = () => {
             <ul className="list-group">
               {reviews.map((review) => (
                 <li key={review._id} className="list-group-item">
-                  <strong>{review.customerId.name}</strong> -{" "}
-                  {review.rating} Stars
+                  <div className="d-flex justify-content-between">
+                    <strong>{review.customerId.name}</strong>
+                    <div className="text-warning">{renderStars(review.rating)}</div>
+                  </div>
                   <p>{review.comment}</p>
                 </li>
               ))}

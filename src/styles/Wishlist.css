@@ -30,3 +30,12 @@
 .wishlist-btn:hover {
     color: red;
 }
+.star {
+    color: gray;
+    font-size: 1.2em;
+  }
+  
+  .star.filled {
+    color: gold;
+  }
+  
