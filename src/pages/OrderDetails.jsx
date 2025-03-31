@@ -15,13 +15,13 @@ const OrderDetailsUser = () => {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
 
-                // Fetch product names for each item
+                // Fetch product details for each item
                 const updatedOrder = {
                     ...data,
-                    items: await fetchProductDetails(data.items),
+                    items: await fetchProductDetails(data.items), // Ensure each item has name and image
                 };
 
-                setOrder(updatedOrder);
+                setOrder(updatedOrder); // Update state with the fetched order details
             } catch (error) {
                 console.error("Error fetching order details:", error);
             }
@@ -32,21 +32,26 @@ const OrderDetailsUser = () => {
     // 🔹 Fetch product details for each item in the order
     const fetchProductDetails = async (items) => {
         try {
+            // Fetch each product's name and image based on productId
             const updatedItems = await Promise.all(
                 items.map(async (item) => {
                     try {
                         const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
-                        return { ...item, name: data.name, image: data.images?.[0] }; // Add product name & image
+                        return { 
+                            ...item, 
+                            name: data.name, 
+                            image: data.images?.[0] || "/placeholder.png" // Use first image or placeholder if missing
+                        }; 
                     } catch (error) {
                         console.error(`Error fetching product ${item.productId}:`, error);
-                        return { ...item, name: "Unknown Product", image: "" }; // Handle missing product data
+                        return { ...item, name: "Unknown Product", image: "/placeholder.png" }; // Handle missing product data
                     }
                 })
             );
-            return updatedItems;
+            return updatedItems; // Return updated list of items with product details
         } catch (error) {
             console.error("Error fetching product details:", error);
-            return items;
+            return items; // In case of error, return the original items
         }
     };
 
