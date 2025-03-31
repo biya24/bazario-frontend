@@ -38,7 +38,6 @@ const VendorDashboard = () => {
 
             {/* Add Product Form */}
             <div className="card p-4 mb-4 shadow">
-                <h4 className="mb-3 text-success">Add New Product</h4>
                 <AddProductForm onProductAdded={fetchProducts} />
             </div>
 
