@@ -10,11 +10,13 @@ const ProductScreen = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [product, setProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1); // ✅ Default quantity is 1
+  const [quantity, setQuantity] = useState(1);
 
-  // ✅ Get wishlist items from Redux store
   const wishlist = useSelector((state) => state.wishlist.wishlistItems);
   const isWishlisted = wishlist.some((item) => item._id === id);
+
+  // ✅ Check if user is logged in
+  const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -26,17 +28,29 @@ const ProductScreen = () => {
     fetchProduct();
   }, [id]);
 
+  // ✅ Add to Cart with Login Check
   const addToCartHandler = () => {
+    if (!userInfo || !userInfo.token) {
+      alert("❌ Please log in to add items to your cart.");
+      return;
+    }
     if (!product) return;
-    dispatch(addToCart({ ...product, quantity })); // ✅ Add selected quantity
+    dispatch(addToCart({ ...product, quantity }));
+    alert("✅ Product added to cart!");
   };
 
-  // ✅ Toggle Wishlist Handler
+  // ✅ Toggle Wishlist with Login Check
   const toggleWishlistHandler = () => {
+    if (!userInfo || !userInfo.token) {
+      alert("❌ Please log in to add items to your wishlist.");
+      return;
+    }
     if (isWishlisted) {
       dispatch(removeFromWishlist(id));
+      alert("✅ Product removed from wishlist!");
     } else {
       dispatch(addToWishlist(product));
+      alert("✅ Product added to wishlist!");
     }
   };
 
@@ -67,15 +81,8 @@ const ProductScreen = () => {
         </select>
 
         {/* ✅ Wishlist Button */}
-        <button
-          className="btn btn-light mx-2"
-          onClick={toggleWishlistHandler}
-        >
-          {isWishlisted ? (
-            <FaHeart color="red" /> // Filled heart if wishlisted
-          ) : (
-            <FaRegHeart /> // Empty heart if not wishlisted
-          )}
+        <button className="btn btn-light mx-2" onClick={toggleWishlistHandler}>
+          {isWishlisted ? <FaHeart color="red" /> : <FaRegHeart />}
         </button>
 
         <button className="btn btn-success" onClick={addToCartHandler}>
