@@ -40,7 +40,7 @@ const VendorOrderScreen = () => {
         <div className="container mt-4">
             <h2>Order Details</h2>
             <p><strong>Order ID:</strong> {order._id}</p>
-            <p><strong>Buyer Name:</strong> {order.customerId?.name || "Unknown"}</p> // ✅ Uses correct populated field
+            <p><strong>Buyer Name:</strong> {order.customerId?.name || "Unknown"}</p>
             <p><strong>Total Amount:</strong> ${order.totalAmount.toFixed(2)}</p>
             <p><strong>Status:</strong> {order.status}</p>
 
