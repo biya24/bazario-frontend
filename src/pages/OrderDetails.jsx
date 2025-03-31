@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-const OrderDetails = () => {
+const OrderDetailsUser = () => {
     const { id } = useParams(); // Get order ID from URL
     const [order, setOrder] = useState(null);
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
