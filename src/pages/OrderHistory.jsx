@@ -5,12 +5,14 @@ import { Link } from "react-router-dom";
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const [reviews, setReviews] = useState({});
+    const [loading, setLoading] = useState(true); // ✅ Add loading state
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
 
     useEffect(() => {
         const fetchOrders = async () => {
             if (!userInfo) return;
             try {
+                setLoading(true); // ✅ Set loading before fetching
                 const { data } = await axios.get("https://bazario-backend-iqac.onrender.com/api/orders/my-orders", {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
@@ -26,6 +28,8 @@ const OrderHistory = () => {
                 setOrders(updatedOrders);
             } catch (error) {
                 console.error("Error fetching orders:", error);
+            } finally {
+                setLoading(false); // ✅ Stop loading after fetching
             }
         };
         fetchOrders();
