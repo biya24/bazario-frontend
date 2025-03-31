@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import AddProductForm from "../components/AddProductForm";
+import EditProductModal from "../components/EditProductModal"; // Import the modal component
 
 const VendorDashboard = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [message, setMessage] = useState("");
+    const [selectedProduct, setSelectedProduct] = useState(null); // For editing
 
     const fetchProducts = async () => {
         try {
@@ -59,6 +61,8 @@ const VendorDashboard = () => {
                                     <th>#</th>
                                     <th>Product Name</th>
                                     <th>Price ($)</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,6 +71,15 @@ const VendorDashboard = () => {
                                         <td>{index + 1}</td>
                                         <td>{product.name}</td>
                                         <td>${product.price.toFixed(2)}</td>
+                                        <td>{product.stock}</td>
+                                        <td>
+                                            <button
+                                                className="btn btn-warning btn-sm me-2"
+                                                onClick={() => setSelectedProduct(product)}
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -74,6 +87,15 @@ const VendorDashboard = () => {
                     </div>
                 )}
             </div>
+
+            {/* Edit Product Modal */}
+            {selectedProduct && (
+                <EditProductModal 
+                    product={selectedProduct} 
+                    onClose={() => setSelectedProduct(null)} 
+                    onProductUpdated={fetchProducts} 
+                />
+            )}
         </div>
     );
 };
