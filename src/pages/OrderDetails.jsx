@@ -15,6 +15,9 @@ const OrderDetailsUser = () => {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
                 console.log("Order Data:", data); // Log the fetched order data
+                
+                // Verify if order items have productId
+                console.log("Order Items:", data.items); 
 
                 // Fetch product details for each item
                 const updatedOrder = {
@@ -36,6 +39,7 @@ const OrderDetailsUser = () => {
             const updatedItems = await Promise.all(
                 items.map(async (item) => {
                     try {
+                        console.log(`Fetching product details for productId: ${item.productId}`); // Log the productId
                         const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
                         console.log("Fetched Product:", data); // Log the fetched product details
                         return { 
