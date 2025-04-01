@@ -45,6 +45,27 @@ const OrderHistory = () => {
         }
     };
 
+    // Handle Order Actions
+    const handleCancelOrder = async (orderId) => {
+        if (await cancelOrder(orderId)) fetchOrders();
+    };
+
+    const handleReturnOrder = async (orderId) => {
+        if (await returnOrder(orderId)) fetchOrders();
+    };
+
+    const handleReorder = (order) => {
+        // Navigate to the cart page and add items from this order
+        const reorderedItems = order.items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+        }));
+
+        localStorage.setItem("reorderItems", JSON.stringify(reorderedItems));
+        alert("Reordered items added to cart!");
+        window.location.href = "/cart"; // Redirect to cart page
+    };
+
     return (
         <div className="container mt-5">
             <h2>My Orders</h2>
@@ -105,9 +126,25 @@ const OrderHistory = () => {
                                     ))}
                                 </td>
                                 <td>
+                                    {/* Action Buttons */}
                                     {order.status === "Pending" && (
-                                        <button className="btn btn-success btn-sm" onClick={() => retryPayment(order._id)}>
+                                        <button className="btn btn-success btn-sm me-2" onClick={() => retryPayment(order._id)}>
                                             Retry Payment
+                                        </button>
+                                    )}
+                                    {order.status === "Processing" && (
+                                        <button className="btn btn-danger btn-sm me-2" onClick={() => handleCancelOrder(order._id)}>
+                                            Cancel Order
+                                        </button>
+                                    )}
+                                    {order.status === "Delivered" && (
+                                        <button className="btn btn-warning btn-sm me-2" onClick={() => handleReturnOrder(order._id)}>
+                                            Return Order
+                                        </button>
+                                    )}
+                                    {order.status !== "Cancelled" && (
+                                        <button className="btn btn-info btn-sm" onClick={() => handleReorder(order)}>
+                                            Reorder
                                         </button>
                                     )}
                                 </td>
