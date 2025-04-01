@@ -10,6 +10,10 @@ const VendorDashboard = () => {
     const [message, setMessage] = useState("");
     const [selectedProduct, setSelectedProduct] = useState(null);
 
+     // Get vendor ID from local storage
+     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+     const vendorId = userInfo?._id; // Adjust based on how userInfo is stored
+
     const fetchProducts = async () => {
         try {
             const userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -56,7 +60,8 @@ const VendorDashboard = () => {
     return (
         <div className="container mt-5">
             <h2 className="text-center mb-4 text-primary">Vendor Dashboard</h2>
-            <NotificationButton vendorId={vendorId} />
+            {/* Pass vendorId to NotificationButton */}
+            {vendorId && <NotificationButton vendorId={vendorId} />}
 
             <div className="card p-4 mb-4 shadow">
                 <AddProductForm onProductAdded={fetchProducts} />
