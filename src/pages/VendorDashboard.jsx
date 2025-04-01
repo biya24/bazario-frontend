@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import AddProductForm from "../components/AddProductForm";
 import EditProductModal from "../components/EditProductModal";
+import NotificationButton from "../components/NotificationButton";
 
 const VendorDashboard = () => {
     const [products, setProducts] = useState([]);
@@ -55,6 +56,7 @@ const VendorDashboard = () => {
     return (
         <div className="container mt-5">
             <h2 className="text-center mb-4 text-primary">Vendor Dashboard</h2>
+            <NotificationButton vendorId={vendorId} />
 
             <div className="card p-4 mb-4 shadow">
                 <AddProductForm onProductAdded={fetchProducts} />
