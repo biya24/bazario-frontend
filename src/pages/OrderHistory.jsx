@@ -131,8 +131,9 @@ const OrderHistory = () => {
                                         <button className="btn btn-success btn-sm me-2" onClick={() => retryPayment(order._id)}>
                                             Retry Payment
                                         </button>
+
                                     )}
-                                    {order.status === "Processing" && (
+                                    {(order.status === "Paid" || order.status === "Pending") && (
                                         <button className="btn btn-danger btn-sm me-2" onClick={() => handleCancelOrder(order._id)}>
                                             Cancel Order
                                         </button>
