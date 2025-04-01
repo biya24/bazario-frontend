@@ -11,10 +11,25 @@ const NotificationButton = ({ vendorId }) => {
 
     const fetchNotifications = async () => {
         try {
-            const { data } = await axios.get(`/api/notifications/${vendorId}`);
-            setNotifications(data);
+            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            if (!userInfo || !userInfo.token) {
+                throw new Error("User not authenticated");
+            }
+
+            const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
+            const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/notifications/${vendorId}`, config);
+            
+            console.log("API Response:", data); // Debugging log
+
+            // Ensure notifications are an array
+            if (Array.isArray(data)) {
+                setNotifications(data);
+            } else {
+                setNotifications([]); // Set empty array if response is not valid
+            }
         } catch (error) {
-            console.error("Error fetching notifications", error);
+            console.error("Error fetching notifications:", error);
+            setNotifications([]); // Prevent map error
         }
     };
 
