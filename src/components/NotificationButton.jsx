@@ -33,40 +33,53 @@ const NotificationButton = ({ vendorId }) => {
         }
     };
 
-    const markAsRead = async (id) => {
+    const markNotificationAsRead = async (notificationId) => {
         try {
-            await axios.put(`/api/notifications/mark-read/${id}`);
-            setNotifications(notifications.filter((notif) => notif._id !== id));
+            const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+            if (!userInfo || !userInfo.token) {
+                throw new Error("User not authenticated");
+            }
+    
+            const config = {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+            };
+    
+            await axios.patch(
+                `https://bazario-backend-iqac.onrender.com/api/notifications/mark-read/${notificationId}`,
+                {}, // Sending an empty body
+                config
+            );
+    
+            // Refresh notifications after marking as read
+            fetchNotifications();
         } catch (error) {
             console.error("Error marking notification as read", error);
         }
     };
+    
 
     return (
-        <div className="relative">
-            <button
-                className="p-2 bg-blue-600 text-white rounded"
-                onClick={() => setShowDropdown(!showDropdown)}
-            >
-                🔔 {notifications.length > 0 && <span>({notifications.length})</span>}
-            </button>
-
-            {showDropdown && (
-                <div className="absolute right-0 bg-white shadow-lg p-4 w-64 border">
-                    {notifications.length === 0 ? (
-                        <p>No new notifications</p>
-                    ) : (
-                        notifications.map((notif) => (
-                            <div key={notif._id} className="p-2 border-b flex justify-between">
-                                <span>{notif.message}</span>
-                                <button onClick={() => markAsRead(notif._id)}>✔</button>
-                            </div>
-                        ))
-                    )}
-                </div>
+        <div>
+            <h4>Notifications</h4>
+            {Array.isArray(notifications) && notifications.length > 0 ? (
+                notifications.map((notif) => (
+                    <div key={notif._id} className="notification-item">
+                        <p>{notif.message}</p>
+                        {!notif.isRead && (
+                            <button onClick={() => markNotificationAsRead(notif._id)}>
+                                Mark as Read
+                            </button>
+                        )}
+                    </div>
+                ))
+            ) : (
+                <p>No new notifications.</p>
             )}
         </div>
     );
+    
 };
 
 export default NotificationButton;
