@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../styles/NotificationButton.css"; // Add this CSS file to your project
 
 const NotificationButton = ({ vendorId }) => {
     const [notifications, setNotifications] = useState([]);
@@ -18,7 +19,7 @@ const NotificationButton = ({ vendorId }) => {
 
             const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
             const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/notifications/${vendorId}`, config);
-            
+
             console.log("API Response:", data); // Debugging log
 
             // Ensure notifications are an array
@@ -39,47 +40,61 @@ const NotificationButton = ({ vendorId }) => {
             if (!userInfo || !userInfo.token) {
                 throw new Error("User not authenticated");
             }
-    
+
             const config = {
                 headers: {
                     Authorization: `Bearer ${userInfo.token}`,
                 },
             };
-    
+
             await axios.put(
                 `https://bazario-backend-iqac.onrender.com/api/notifications/mark-read/${notificationId}`,
                 {}, // Sending an empty body
                 config
             );
-    
+
             // Refresh notifications after marking as read
             fetchNotifications();
         } catch (error) {
             console.error("Error marking notification as read", error);
         }
     };
-    
 
     return (
-        <div>
-            <h4>Notifications</h4>
-            {Array.isArray(notifications) && notifications.length > 0 ? (
-                notifications.map((notif) => (
-                    <div key={notif._id} className="notification-item">
-                        <p>{notif.message}</p>
-                        {!notif.isRead && (
-                            <button onClick={() => markNotificationAsRead(notif._id)}>
-                                Mark as Read
-                            </button>
-                        )}
-                    </div>
-                ))
-            ) : (
-                <p>No new notifications.</p>
+        <div className="notification-button">
+            <button
+                className="notification-btn"
+                onClick={() => setShowDropdown(!showDropdown)}
+            >
+                Notifications
+            </button>
+            {showDropdown && (
+                <div className="notification-dropdown">
+                    <h4>Notifications</h4>
+                    {Array.isArray(notifications) && notifications.length > 0 ? (
+                        notifications.map((notif) => (
+                            <div
+                                key={notif._id}
+                                className={`notification-item ${notif.isRead ? 'read' : 'unread'}`}
+                            >
+                                <p>{notif.message}</p>
+                                {!notif.isRead && (
+                                    <button
+                                        className="mark-read-btn"
+                                        onClick={() => markNotificationAsRead(notif._id)}
+                                    >
+                                        Mark as Read
+                                    </button>
+                                )}
+                            </div>
+                        ))
+                    ) : (
+                        <p>No new notifications.</p>
+                    )}
+                </div>
             )}
         </div>
     );
-    
 };
 
 export default NotificationButton;
