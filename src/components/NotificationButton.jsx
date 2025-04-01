@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { FaBell, FaBellSlash } from "react-icons/fa"; // Import bell icons
 import "../styles/NotificationButton.css"; // Add this CSS file to your project
 
 const NotificationButton = ({ vendorId }) => {
@@ -62,12 +63,19 @@ const NotificationButton = ({ vendorId }) => {
 
     return (
         <div className="notification-button">
-            <button
-                className="notification-btn"
+            {/* Notification bell icon */}
+            <div
+                className="notification-icon"
                 onClick={() => setShowDropdown(!showDropdown)}
             >
-                Notifications
-            </button>
+                {notifications.some((notif) => !notif.isRead) ? (
+                    <FaBell color="red" size={24} /> // Red bell for new notifications
+                ) : (
+                    <FaBellSlash color="gray" size={24} /> // Grey bell if no new notifications
+                )}
+            </div>
+
+            {/* Dropdown for showing notifications */}
             {showDropdown && (
                 <div className="notification-dropdown">
                     <h4>Notifications</h4>
