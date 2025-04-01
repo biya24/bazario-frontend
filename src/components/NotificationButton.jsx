@@ -46,7 +46,7 @@ const NotificationButton = ({ vendorId }) => {
                 },
             };
     
-            await axios.patch(
+            await axios.put(
                 `https://bazario-backend-iqac.onrender.com/api/notifications/mark-read/${notificationId}`,
                 {}, // Sending an empty body
                 config
