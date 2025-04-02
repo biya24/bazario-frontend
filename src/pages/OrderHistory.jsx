@@ -12,6 +12,7 @@ const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const [reviews, setReviews] = useState({});
     const [loading, setLoading] = useState(true);
+    const getUserInfo = () => JSON.parse(localStorage.getItem("userInfo")) || {};
 
     // Fetch Orders
     const fetchOrders = useCallback(async () => {
