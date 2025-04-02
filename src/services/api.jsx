@@ -51,10 +51,28 @@ export const cancelOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return false;
 
     try {
-        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`);
-        console.log('Order cancelled:', response.data);
+        const token = localStorage.getItem("token"); // Retrieve token from local storage
+        if (!token) {
+            console.error("No token found, user must be logged in.");
+            return;
+        }
+
+        const response = await axios.put(
+            `https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`,
+            {}, // No request body needed
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`, // Include token in headers
+                },
+            }
+        );
+
+        console.log("Order cancelled:", response.data);
     } catch (error) {
-        console.error('Error cancelling order:', error.response?.data?.message || error.message);
+        console.error(
+            "Error cancelling order:",
+            error.response?.data?.message || error.message
+        );
     }
 };
 
