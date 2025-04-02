@@ -48,31 +48,29 @@ export const fetchProductDetails = async (items) => {
 
 export const cancelOrder = async (orderId) => {
     const userInfo = getUserInfo();
+    if (!userInfo.token) {
+        console.error("No token found, user must be logged in.");
+        return;
+    }
+
     if (!window.confirm("Are you sure you want to cancel this order?")) return false;
 
     try {
-        const token = localStorage.getItem("token"); // Retrieve token from local storage
-        if (!token) {
-            console.error("No token found, user must be logged in.");
-            return;
-        }
-
         const response = await axios.put(
-            `https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`,
-            {}, // No request body needed
+            `${API_BASE_URL}/orders/cancel/${orderId}`,
+            {},
             {
-                headers: { Authorization: `Bearer ${userInfo.token}` },
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`, // ✅ Standardized
+                },
             }
         );
-
         console.log("Order cancelled:", response.data);
     } catch (error) {
-        console.error(
-            "Error cancelling order:",
-            error.response?.data?.message || error.message
-        );
+        console.error("Error cancelling order:", error.response?.data?.message || error.message);
     }
 };
+
 
 export const retryPayment = async (orderId) => {
     const userInfo = getUserInfo();
@@ -94,19 +92,29 @@ export const retryPayment = async (orderId) => {
 
 export const returnOrder = async (orderId) => {
     const userInfo = getUserInfo();
+    if (!userInfo.token) {
+        console.error("No token found, user must be logged in.");
+        return;
+    }
+
     if (!window.confirm("Are you sure you want to return this order?")) return false;
 
     try {
-        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/return/${orderId}`,
-            {}, {
-                headers: { Authorization: `Bearer ${userInfo.token}` },
-            });
-        
-        console.log('Order returned:', response.data);
+        const response = await axios.put(
+            `${API_BASE_URL}/orders/return/${orderId}`,
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`, // ✅ Token added
+                },
+            }
+        );
+        console.log("Order returned:", response.data);
     } catch (error) {
-        console.error('Error returning order:', error.response?.data?.message || error.message);
+        console.error("Error returning order:", error.response?.data?.message || error.message);
     }
 };
+
 
 export const submitReview = async (productId, rating, comment) => {
     const userInfo = getUserInfo();
