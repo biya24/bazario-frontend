@@ -54,16 +54,13 @@ const OrderHistory = () => {
         if (await returnOrder(orderId)) fetchOrders();
     };
 
-    const handleReorder = (order) => {
-        // Navigate to the cart page and add items from this order
-        const reorderedItems = order.items.map((item) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-        }));
-
-        localStorage.setItem("reorderItems", JSON.stringify(reorderedItems));
-        alert("Reordered items added to cart!");
-        window.location.href = "/cart"; // Redirect to cart page
+    const handleReorder = async (orderId) => {
+        try {
+            const response = await axios.post(`https://bazario-backend-iqac.onrender.com/api/orders/reorder/${orderId}`);
+            console.log('Reorder successful:', response.data);
+        } catch (error) {
+            console.error('Error reordering:', error.response?.data?.message || error.message);
+        }
     };
 
     return (

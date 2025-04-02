@@ -51,15 +51,10 @@ export const cancelOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to cancel this order?")) return false;
 
     try {
-        await axios.put(`${API_BASE_URL}/orders/cancel/${orderId}`, {}, {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        alert("Order cancelled successfully!");
-        return true;
+        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`);
+        console.log('Order cancelled:', response.data);
     } catch (error) {
-        console.error("Error cancelling order:", error);
-        alert("Failed to cancel order.");
-        return false;
+        console.error('Error cancelling order:', error.response?.data?.message || error.message);
     }
 };
 
@@ -86,15 +81,10 @@ export const returnOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to return this order?")) return false;
 
     try {
-        await axios.put(`${API_BASE_URL}/orders/return/${orderId}`, {}, {
-            headers: { Authorization: `Bearer ${userInfo.token}` },
-        });
-        alert("Return request submitted successfully!");
-        return true;
+        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/return/${orderId}`);
+        console.log('Order returned:', response.data);
     } catch (error) {
-        console.error("Error processing return:", error);
-        alert("Failed to process return request.");
-        return false;
+        console.error('Error returning order:', error.response?.data?.message || error.message);
     }
 };
 
