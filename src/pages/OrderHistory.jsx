@@ -14,6 +14,7 @@ const OrderHistory = () => {
     const [reviews, setReviews] = useState({});
     const [loading, setLoading] = useState(true);
     const getUserInfo = () => JSON.parse(localStorage.getItem("userInfo")) || {};
+    const API_BASE_URL = "https://bazario-backend-iqac.onrender.com/api";
 
     // Fetch Orders
     const fetchOrders = useCallback(async () => {
