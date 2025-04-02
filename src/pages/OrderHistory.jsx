@@ -58,26 +58,31 @@ const OrderHistory = () => {
     };
 
     const handleReorder = async (orderId) => {
-        console.log("Reordering Order ID:", orderId);
-        try {
-            const userInfo = getUserInfo();
-            if (!userInfo.token) {
-                console.error("No token found, user must be logged in.");
-                return;
-            }
-    
-            const response = await axios.post(
-                `${API_BASE_URL}/orders/reorder/${orderId}`,  // Ensure orderId is valid
-                {}, 
-                {
-                    headers: { Authorization: `Bearer ${userInfo.token}` },
-                }
-            );
-    
-            console.log("Order reordered successfully:", response.data);
-        } catch (error) {
-            console.error("Error reordering:", error.response?.data?.message || error.message);
+         console.log("Reordering Order ID:", orderId);  // Debugging
+    if (!orderId || typeof orderId !== "string") {
+        console.error("Invalid orderId:", orderId);
+        return;
+    }
+
+    try {
+        const userInfo = getUserInfo();
+        if (!userInfo.token) {
+            console.error("No token found, user must be logged in.");
+            return;
         }
+
+        const response = await axios.post(
+            `${API_BASE_URL}/orders/reorder/${orderId}`,  // ✅ Correct URL
+            {},
+            {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            }
+        );
+
+        console.log("Order reordered successfully:", response.data);
+    } catch (error) {
+        console.error("Error reordering:", error.response?.data?.message || error.message);
+    }
     };
 
     return (
