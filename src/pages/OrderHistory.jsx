@@ -57,16 +57,25 @@ const OrderHistory = () => {
     };
 
     const handleReorder = async (orderId) => {
-        const userInfo = getUserInfo();
+        console.log("Reordering Order ID:", orderId);
         try {
-            const response = await axios.post(`https://bazario-backend-iqac.onrender.com/api/orders/reorder/${orderId}`,
-                {}, {
+            const userInfo = getUserInfo();
+            if (!userInfo.token) {
+                console.error("No token found, user must be logged in.");
+                return;
+            }
+    
+            const response = await axios.post(
+                `${API_BASE_URL}/orders/reorder/${orderId}`,  // Ensure orderId is valid
+                {}, 
+                {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
-                });
-            
-            console.log('Reorder successful:', response.data);
+                }
+            );
+    
+            console.log("Order reordered successfully:", response.data);
         } catch (error) {
-            console.error('Error reordering:', error.response?.data?.message || error.message);
+            console.error("Error reordering:", error.response?.data?.message || error.message);
         }
     };
 
