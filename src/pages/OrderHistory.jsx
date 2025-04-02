@@ -55,8 +55,13 @@ const OrderHistory = () => {
     };
 
     const handleReorder = async (orderId) => {
+        const userInfo = getUserInfo();
         try {
-            const response = await axios.post(`https://bazario-backend-iqac.onrender.com/api/orders/reorder/${orderId}`);
+            const response = await axios.post(`https://bazario-backend-iqac.onrender.com/api/orders/reorder/${orderId}`,
+                {}, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` },
+                });
+            
             console.log('Reorder successful:', response.data);
         } catch (error) {
             console.error('Error reordering:', error.response?.data?.message || error.message);

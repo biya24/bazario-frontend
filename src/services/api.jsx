@@ -61,9 +61,7 @@ export const cancelOrder = async (orderId) => {
             `https://bazario-backend-iqac.onrender.com/api/orders/cancel/${orderId}`,
             {}, // No request body needed
             {
-                headers: {
-                    Authorization: `Bearer ${token}`, // Include token in headers
-                },
+                headers: { Authorization: `Bearer ${userInfo.token}` },
             }
         );
 
@@ -99,7 +97,11 @@ export const returnOrder = async (orderId) => {
     if (!window.confirm("Are you sure you want to return this order?")) return false;
 
     try {
-        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/return/${orderId}`);
+        const response = await axios.put(`https://bazario-backend-iqac.onrender.com/api/orders/return/${orderId}`,
+            {}, {
+                headers: { Authorization: `Bearer ${userInfo.token}` },
+            });
+        
         console.log('Order returned:', response.data);
     } catch (error) {
         console.error('Error returning order:', error.response?.data?.message || error.message);
