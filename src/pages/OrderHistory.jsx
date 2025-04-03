@@ -28,153 +28,77 @@ const OrderHistory = () => {
         fetchOrders();
     }, [fetchOrders]);
 
-    // Handle Review Input
-    const handleReviewChange = (productId, field, value) => {
-        setReviews((prev) => ({
-            ...prev,
-            [productId]: { ...prev[productId], [field]: value },
-        }));
-    };
-
-    // Submit Review
-    const handleReviewSubmit = async (productId) => {
-        const review = reviews[productId];
-        if (!review?.rating || !review?.comment) {
-            alert("Please provide both rating and comment.");
-            return;
-        }
-        if (await submitReview(productId, review.rating, review.comment)) {
-            setReviews((prev) => ({ ...prev, [productId]: {} }));
-        }
-    };
-
-    // Handle Order Actions
-    const handleCancelOrder = async (orderId) => {
-        if (await cancelOrder(orderId)) fetchOrders();
-    };
-
-    const handleReturnOrder = async (orderId) => {
-        if (await returnOrder(orderId)) fetchOrders();
-    };
-
-    const handleReorder = async (order) => {
-        const orderId = order?._id; // Extract ID from the object
-        console.log("Reordering Order ID:", orderId);  // Debugging
-    
-        if (!orderId || typeof orderId !== "string") {
-            console.error("Invalid orderId:", orderId);
-            return;
-        }
-    
-        try {
-            const userInfo = getUserInfo();
-            if (!userInfo.token) {
-                console.error("No token found, user must be logged in.");
-                return;
-            }
-    
-            const response = await axios.post(
-                `${API_BASE_URL}/orders/reorder/${orderId}`, // ✅ Correct URL
-                {},
-                {
-                    headers: { Authorization: `Bearer ${userInfo.token}` },
-                }
-            );
-    
-            console.log("Order reordered successfully:", response.data);
-        } catch (error) {
-            console.error("Error reordering:", error.response?.data?.message || error.message);
-        }
-    };
-    
-
     return (
         <div className="container mt-5">
-            <h2>My Orders</h2>
+            <h2 className="text-center">My Orders</h2>
             {loading ? (
                 <p>Loading your orders, please wait...</p>
             ) : orders.length === 0 ? (
                 <p>No orders found.</p>
             ) : (
-                <table className="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Order ID</th>
-                            <th>Total</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Products</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.map(order => (
-                            <tr key={order._id}>
-                                <td>
-                                    <Link to={`/order/${order._id}`} className="text-primary">
-                                        {order._id}
-                                    </Link>
-                                </td>
-                                <td>${order.totalAmount}</td>
-                                <td>{order.status}</td>
-                                <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-                                <td>
-                                    {order.items.map((item, index) => (
-                                        <div key={index} className="mb-3">
-                                            <Link to={`/product/${item.productId}`} className="text-decoration-none">
-                                                <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-2" />
-                                                <strong>{item.name}</strong> (Qty: {item.quantity})
-                                            </Link>
-
+                <div className="table-responsive"> {/* ✅ Makes table scrollable on small screens */}
+                    <table className="table table-striped table-bordered">
+                        <thead className="table-dark text-center">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Products</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {orders.map((order) => (
+                                <tr key={order._id}>
+                                    <td>
+                                        <Link to={`/order/${order._id}`} className="text-primary">
+                                            {order._id}
+                                        </Link>
+                                    </td>
+                                    <td>${order.totalAmount}</td>
+                                    <td>{order.status}</td>
+                                    <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+                                    <td>
+                                        {order.items.map((item, index) => (
+                                            <div key={index} className="d-flex flex-wrap align-items-center mb-2">
+                                                <img src={item.image || "/placeholder.png"} alt={item.name} className="img-fluid me-2" style={{ width: "50px", height: "50px", objectFit: "cover" }} />
+                                                <Link to={`/product/${item.productId}`} className="text-decoration-none">
+                                                    <strong>{item.name}</strong> (Qty: {item.quantity})
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </td>
+                                    <td>
+                                        {/* ✅ Stack buttons on mobile */}
+                                        <div className="d-grid gap-2 d-md-block">
+                                            {order.status === "Pending" && (
+                                                <button className="btn btn-success btn-sm me-2" onClick={() => retryPayment(order._id)}>
+                                                    Retry Payment
+                                                </button>
+                                            )}
+                                            {(order.status === "Paid" || order.status === "Pending") && (
+                                                <button className="btn btn-danger btn-sm me-2" onClick={() => handleCancelOrder(order._id)}>
+                                                    Cancel
+                                                </button>
+                                            )}
                                             {order.status === "Delivered" && (
-                                                <div className="mt-3 p-3 border rounded bg-light">
-                                                    <h5>Write a Review</h5>
-                                                    <textarea
-                                                        placeholder="Write your review..."
-                                                        value={reviews[item.productId]?.comment || ""}
-                                                        onChange={(e) => handleReviewChange(item.productId, "comment", e.target.value)}
-                                                        className="form-control mb-2"
-                                                        rows="3"
-                                                    />
-                                                    <button
-                                                        className="btn btn-primary mt-2"
-                                                        onClick={() => handleReviewSubmit(item.productId)}
-                                                    >
-                                                        Submit Review
-                                                    </button>
-                                                </div>
+                                                <button className="btn btn-warning btn-sm me-2" onClick={() => handleReturnOrder(order._id)}>
+                                                    Return
+                                                </button>
+                                            )}
+                                            {order.status !== "Canceled" && (
+                                                <button className="btn btn-info btn-sm" onClick={() => handleReorder(order)}>
+                                                    Reorder
+                                                </button>
                                             )}
                                         </div>
-                                    ))}
-                                </td>
-                                <td>
-                                    {/* Action Buttons */}
-                                    {order.status === "Pending" && (
-                                        <button className="btn btn-success btn-sm me-2" onClick={() => retryPayment(order._id)}>
-                                            Retry Payment
-                                        </button>
-
-                                    )}
-                                    {(order.status === "Paid" || order.status === "Pending") && (
-                                        <button className="btn btn-danger btn-sm me-2" onClick={() => handleCancelOrder(order._id)}>
-                                            Cancel Order
-                                        </button>
-                                    )}
-                                    {order.status === "Delivered" && (
-                                        <button className="btn btn-warning btn-sm me-2" onClick={() => handleReturnOrder(order._id)}>
-                                            Return Order
-                                        </button>
-                                    )}
-                                    {order.status !== "Cancelled" && (
-                                        <button className="btn btn-info btn-sm" onClick={() => handleReorder(order)}>
-                                            Reorder
-                                        </button>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )}
         </div>
     );
