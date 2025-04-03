@@ -31,11 +31,19 @@ const LoginScreen = () => {
       }
 
       localStorage.setItem("userInfo", JSON.stringify(data)); // Store user data
-      navigate("/dashboard");
+
+      // Redirect based on user role
+      if (data.role === "admin") {
+        navigate("/admin-dashboard");
+      } else if (data.role === "vendor") {
+        navigate("/vendor-dashboard");
+      } else {
+        navigate("/user-dashboard");
+      }
     } catch (err) {
       if (err.response?.data?.message === "Please verify your email before logging in") {
-        setShowResend(true); // ✅ This ensures the button appears if verification is required
-    }
+        setShowResend(true);
+      }
       setError(err.response?.data?.message || "Invalid email or password.");
     } finally {
       setLoading(false);
