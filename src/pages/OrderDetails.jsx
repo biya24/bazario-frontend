@@ -14,23 +14,18 @@ const OrderDetailsUser = () => {
                 const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/orders/${id}`, {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
-                console.log("Order Data:", data); // Log the fetched order data
-
-                if (!data.items || data.items.length === 0) {
-                    console.warn("No items found in this order.");
-                    return;
-                }
-                
-                // Verify if order items have productId
-                console.log("Order Items:", data.items); 
-
-                // Fetch product details for each item
-                const updatedOrder = {
-                    ...data,
-                    items: await fetchProductDetails(data.items), // Ensure each item has name and image
-                };
-
-                setOrder(updatedOrder); // Update state with the fetched order details
+    
+                console.log("Fetched Order Data:", data);
+    
+                // Transform items to include name and avoid fetching product details
+                const updatedItems = data.items.map((item) => ({
+                    ...item,
+                    name: item.productId.name || "Unknown Product",
+                    image: "/placeholder.png", // Placeholder, update if images are available
+                    productId: item.productId._id, // Extract only the _id
+                }));
+    
+                setOrder({ ...data, items: updatedItems });
             } catch (error) {
                 console.error("Error fetching order details:", error);
             }
