@@ -14,17 +14,43 @@ const OrderDetailsUser = () => {
                 const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/orders/${id}`, {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
-    
+        
                 console.log("Fetched Order Data:", data);
-    
-                // Transform items to include product name and image
-                const updatedItems = data.items.map((item) => ({
-                    ...item,
-                    name: item.productId.name || "Unknown Product",
-                    image: item.productId.images?.[0] || "/placeholder.png", // 🔹 Ensure first image is used
-                    productId: item.productId._id, // Store only product _id
-                }));
-    
+        
+                // If product images are missing, fetch product details
+                const updatedItems = await Promise.all(
+                    data.items.map(async (item) => {
+                        if (!item.productId || !item.productId._id) {
+                            console.warn("Missing productId for item:", item);
+                            return { ...item, name: "Unknown Product", image: "/placeholder.png" };
+                        }
+        
+                        // Fetch product details if images are missing
+                        if (!item.productId.images || item.productId.images.length === 0) {
+                            try {
+                                const { data: productData } = await axios.get(
+                                    `https://bazario-backend-iqac.onrender.com/api/products/${item.productId._id}`
+                                );
+                                return { 
+                                    ...item, 
+                                    name: productData.name || "Unknown Product", 
+                                    image: productData.images?.[0] || "/placeholder.png" 
+                                };
+                            } catch (error) {
+                                console.error(`Error fetching product ${item.productId._id}:`, error);
+                                return { ...item, name: "Unknown Product", image: "/placeholder.png" };
+                            }
+                        }
+        
+                        // Use existing product details
+                        return {
+                            ...item,
+                            name: item.productId.name || "Unknown Product",
+                            image: item.productId.images[0] || "/placeholder.png",
+                        };
+                    })
+                );
+        
                 setOrder({ ...data, items: updatedItems });
             } catch (error) {
                 console.error("Error fetching order details:", error);
@@ -71,11 +97,12 @@ const OrderDetailsUser = () => {
             {/* 🔹 Display Delivery Address */}
             <h4>Delivery Address:</h4>
             <p>
-                <strong>{order.deliveryAddress.fullName}</strong> <br />
-                {order.deliveryAddress.houseName}, {order.deliveryAddress.street} <br />
-                {order.deliveryAddress.city}, {order.deliveryAddress.district} <br />
-                <strong>Postal Code:</strong> {order.deliveryAddress.postalCode}
-            </p>
+    <strong>{order.deliveryAddress.fullName}</strong> <br />
+    {order.deliveryAddress.houseName}, {order.deliveryAddress.street} <br />
+    {order.deliveryAddress.city}, {order.deliveryAddress.district} <br />
+    <strong>Postal Code:</strong> {order.deliveryAddress.pin} <br />
+    <strong>Mobile:</strong> {order.deliveryAddress.mobile}
+</p>
     
             <h4>Products:</h4>
             <ul className="list-group">
