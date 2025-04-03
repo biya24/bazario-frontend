@@ -17,12 +17,12 @@ const OrderDetailsUser = () => {
     
                 console.log("Fetched Order Data:", data);
     
-                // Transform items to include name and avoid fetching product details
+                // Transform items to include product name and image
                 const updatedItems = data.items.map((item) => ({
                     ...item,
                     name: item.productId.name || "Unknown Product",
-                    image: "/placeholder.png", // Placeholder, update if images are available
-                    productId: item.productId._id, // Extract only the _id
+                    image: item.productId.images?.[0] || "/placeholder.png", // 🔹 Ensure first image is used
+                    productId: item.productId._id, // Store only product _id
                 }));
     
                 setOrder({ ...data, items: updatedItems });
@@ -68,13 +68,22 @@ const OrderDetailsUser = () => {
             <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
             <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
     
+            {/* 🔹 Display Delivery Address */}
+            <h4>Delivery Address:</h4>
+            <p>
+                <strong>{order.deliveryAddress.fullName}</strong> <br />
+                {order.deliveryAddress.houseName}, {order.deliveryAddress.street} <br />
+                {order.deliveryAddress.city}, {order.deliveryAddress.district} <br />
+                <strong>Postal Code:</strong> {order.deliveryAddress.postalCode}
+            </p>
+    
             <h4>Products:</h4>
             <ul className="list-group">
-                {order.items.map((item, index) => (
-                    <li key={index} className="list-group-item d-flex align-items-center">
-                        <img src={item.image || "/placeholder.png"} alt={item.name || "Unknown"} width="50" className="me-3" />
+                {order.items.map((item) => (
+                    <li key={item.productId} className="list-group-item d-flex align-items-center">
+                        <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-3" />
                         <div>
-                            <strong>{item.name || "Unknown Product"}</strong> (Qty: {item.quantity})
+                            <strong>{item.name}</strong> (Qty: {item.quantity})
                         </div>
                     </li>
                 ))}
