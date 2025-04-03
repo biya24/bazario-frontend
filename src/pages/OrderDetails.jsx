@@ -15,6 +15,11 @@ const OrderDetailsUser = () => {
                     headers: { Authorization: `Bearer ${userInfo.token}` },
                 });
                 console.log("Order Data:", data); // Log the fetched order data
+
+                if (!data.items || data.items.length === 0) {
+                    console.warn("No items found in this order.");
+                    return;
+                }
                 
                 // Verify if order items have productId
                 console.log("Order Items:", data.items); 
@@ -35,30 +40,28 @@ const OrderDetailsUser = () => {
 
     // 🔹 Fetch product details for each item in the order
     const fetchProductDetails = async (items) => {
-        try {
-            const updatedItems = await Promise.all(
-                items.map(async (item) => {
-                    try {
-                        console.log(`Fetching product details for productId: ${item.productId}`); // Log the productId
-                        const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
-                        console.log("Fetched Product:", data); // Log the fetched product details
-                        return { 
-                            ...item, 
-                            name: data.name, 
-                            image: data.images?.[0] || "/placeholder.png" // Use first image or placeholder if missing
-                        }; 
-                    } catch (error) {
-                        console.error(`Error fetching product ${item.productId}:`, error);
-                        return { ...item, name: "Unknown Product", image: "/placeholder.png" }; // Handle missing product data
-                    }
-                })
-            );
-            return updatedItems; // Return updated list of items with product details
-        } catch (error) {
-            console.error("Error fetching product details:", error);
-            return items; // In case of error, return the original items
-        }
+        return await Promise.all(
+            items.map(async (item) => {
+                if (!item.productId) {
+                    console.warn("Missing productId for item:", item);
+                    return { ...item, name: "Unknown Product", image: "/placeholder.png" };
+                }
+    
+                try {
+                    const { data } = await axios.get(`https://bazario-backend-iqac.onrender.com/api/products/${item.productId}`);
+                    return { 
+                        ...item, 
+                        name: data.name || "Unknown Product", 
+                        image: data.images?.[0] || "/placeholder.png"
+                    };
+                } catch (error) {
+                    console.error(`Error fetching product ${item.productId}:`, error);
+                    return { ...item, name: "Unknown Product", image: "/placeholder.png" };
+                }
+            })
+        );
     };
+    
 
     if (!order) return <p>Loading order details...</p>;
 
@@ -69,20 +72,21 @@ const OrderDetailsUser = () => {
             <p><strong>Status:</strong> {order.status}</p>
             <p><strong>Total Amount:</strong> ${order.totalAmount}</p>
             <p><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-
+    
             <h4>Products:</h4>
             <ul className="list-group">
-                {order.items.map((item) => (
-                    <li key={item.productId} className="list-group-item d-flex align-items-center">
-                        <img src={item.image || "/placeholder.png"} alt={item.name} width="50" className="me-3" />
+                {order.items.map((item, index) => (
+                    <li key={index} className="list-group-item d-flex align-items-center">
+                        <img src={item.image || "/placeholder.png"} alt={item.name || "Unknown"} width="50" className="me-3" />
                         <div>
-                            <strong>{item.name}</strong> (Qty: {item.quantity})
+                            <strong>{item.name || "Unknown Product"}</strong> (Qty: {item.quantity})
                         </div>
                     </li>
                 ))}
             </ul>
         </div>
     );
+    
 };
 
 export default OrderDetailsUser;
