@@ -28,30 +28,7 @@ const OrderHistory = () => {
         fetchOrders();
     }, [fetchOrders]);
 
-    // Review input change handler
-const handleReviewChange = (productId, field, value) => {
-    setReviews((prev) => ({
-        ...prev,
-        [productId]: { ...prev[productId], [field]: value },
-    }));
-};
-
-// Submit review for a product
-const handleReviewSubmit = async (productId) => {
-    const review = reviews[productId];
-    if (!review?.rating || !review?.comment) {
-        alert("Please provide both rating and comment.");
-        return;
-    }
-
-    const success = await submitReview(productId, review.rating, review.comment);
-    if (success) {
-        alert("Review submitted successfully!");
-        setReviews((prev) => ({ ...prev, [productId]: {} }));
-    } else {
-        alert("Failed to submit review. Try again.");
-    }
-};
+   
 
 // Cancel Order
 const handleCancelOrder = async (orderId) => {
@@ -163,35 +140,9 @@ const handleReorder = async (order) => {
                                                 </button>
                                             )}
                                             {order.status === "Delivered" && (
-                                                <><div className="mt-2 p-2 border rounded bg-light">
-                                                    <h6 className="mb-1">Write a Review</h6>
-                                                    <textarea
-                                                        placeholder="Write your review..."
-                                                        value={reviews[item.productId]?.comment || ""}
-                                                        onChange={(e) => handleReviewChange(item.productId, "comment", e.target.value)}
-                                                        className="form-control mb-2"
-                                                        rows="2" />
-                                                    <select
-                                                        value={reviews[item.productId]?.rating || ""}
-                                                        onChange={(e) => handleReviewChange(item.productId, "rating", e.target.value)}
-                                                        className="form-select mb-2"
-                                                    >
-                                                        <option value="">Select Rating</option>
-                                                        <option value="1">⭐</option>
-                                                        <option value="2">⭐⭐</option>
-                                                        <option value="3">⭐⭐⭐</option>
-                                                        <option value="4">⭐⭐⭐⭐</option>
-                                                        <option value="5">⭐⭐⭐⭐⭐</option>
-                                                    </select>
-                                                    <button
-                                                        className="btn btn-sm btn-primary"
-                                                        onClick={() => handleReviewSubmit(item.productId)}
-                                                    >
-                                                        Submit Review
-                                                    </button>
-                                                </div><button className="btn btn-warning btn-sm me-2" onClick={() => handleReturnOrder(order._id)}>
-                                                        Return
-                                                    </button></>
+                                                <button className="btn btn-warning btn-sm me-2" onClick={() => handleReturnOrder(order._id)}>
+                                                    Return
+                                                </button>
                                                 
                                             )}
                                             {order.status !== "Canceled" && (
