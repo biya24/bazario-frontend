@@ -48,6 +48,7 @@ const handleReviewSubmit = async (productId) => {
     if (success) {
         alert("Review submitted successfully!");
         setReviews((prev) => ({ ...prev, [productId]: {} }));
+        fetchOrders();
     } else {
         alert("Failed to submit review. Try again.");
     }
@@ -99,6 +100,7 @@ const handleReorder = async (order) => {
             }
         );
         alert("Order reordered successfully!");
+        fetchOrders();
     } catch (error) {
         console.error("Reorder error:", error);
         alert("Failed to reorder. Please try again.");
